@@ -1,131 +1,203 @@
 /**
- * Design tokens for the ROOTS Interview app.
- * All visual constants are centralized here – no magic numbers in components.
+ * ROOTS Interview App – Design Tokens
+ *
+ * Based on UI UX Pro Max recommendations:
+ * - Swiss Modernism 2.0: mathematical 8px grid, Inter font, high contrast
+ * - Bento Grid: rounded cards, soft shadows, clear hierarchy
+ * - WCAG AAA accessibility targets
  */
 
 export const theme = {
   colors: {
     bg: {
-      primary: '#f1f5f9',
-      card: '#fff',
-      muted: '#f8fafc',
-      header: '#1a1a2e',
-      headerGradient: 'linear-gradient(135deg, #1a1a2e, #16213e)',
+      primary: '#F5F5F7',
+      card: '#FFFFFF',
+      muted: '#F8FAFC',
+      elevated: '#FFFFFF',
+      header: '#0F172A',
+      headerGradient: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
     },
     border: {
-      default: '#e2e8f0',
-      active: '#6366f1',
-      strong: '#1a1a2e',
-      dashed: '#cbd5e1',
+      default: '#E2E8F0',
+      subtle: '#F1F5F9',
+      active: '#6366F1',
+      strong: '#0F172A',
+      dashed: '#CBD5E1',
     },
     text: {
-      primary: '#1a1a2e',
-      secondary: '#334155',
-      muted: '#94a3b8',
-      accent: '#4338ca',
-      white: '#fff',
+      primary: '#0F172A',
+      secondary: '#475569',
+      muted: '#94A3B8',
+      accent: '#4338CA',
+      white: '#FFFFFF',
+      inverse: '#F8FAFC',
     },
     accent: {
-      indigo: '#6366f1',
-      indigoDark: '#4338ca',
+      indigo: '#6366F1',
+      indigoDark: '#4338CA',
+      indigoLight: '#EEF2FF',
+      indigoMid: '#A5B4FC',
     },
     info: {
-      bg: '#eef2ff',
-      border: '#c7d2fe',
-      text: '#4338ca',
+      bg: '#EEF2FF',
+      border: '#C7D2FE',
+      text: '#3730A3',
     },
     warning: {
-      bg: '#fef3c7',
-      border: '#fbbf24',
-      text: '#92400e',
-      textDark: '#78350f',
+      bg: '#FFFBEB',
+      border: '#FCD34D',
+      text: '#92400E',
+      textDark: '#78350F',
     },
     hint: {
-      bg: '#fffbeb',
-      border: '#fde68a',
-      text: '#92400e',
+      bg: '#FFFBEB',
+      border: '#FDE68A',
+      text: '#92400E',
     },
     case: {
-      bg: '#f0f9ff',
-      border: '#bae6fd',
-      text: '#0c4a6e',
+      bg: '#F0F9FF',
+      border: '#BAE6FD',
+      text: '#0C4A6E',
     },
     success: {
-      text: '#059669',
+      bg: '#F0FDF4',
+      text: '#166534',
+      badge: '#22C55E',
     },
     danger: {
-      text: '#dc2626',
+      text: '#DC2626',
     },
     eval: {
-      bg: '#fafbfc',
+      bg: '#FAFBFD',
     },
   },
+
+  /* 8px base grid */
   spacing: {
     xs: 4,
     sm: 8,
-    md: 14,
-    lg: 20,
-    xl: 28,
+    md: 16,
+    lg: 24,
+    xl: 32,
+    xxl: 48,
   },
+
   radius: {
-    sm: 5,
-    md: 7,
-    lg: 9,
-    xl: 10,
-  },
-  font: {
-    xs: 10,
-    sm: 11,
-    body: 12,
-    md: 13,
+    sm: 6,
+    md: 10,
     lg: 14,
-    xl: 15,
-    title: 17,
-    header: 18,
+    xl: 20,
+    full: 9999,
   },
-  fontFamily: "'Segoe UI', system-ui, sans-serif",
+
+  /* Typographic scale – Inter */
+  font: {
+    xs: 11,
+    sm: 12,
+    body: 13,
+    md: 14,
+    lg: 15,
+    xl: 17,
+    title: 20,
+    header: 22,
+  },
+
+  fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  fontMono: "'JetBrains Mono', ui-monospace, monospace",
+
+  /* Elevation system */
+  shadow: {
+    sm: '0 1px 2px rgba(15, 23, 42, 0.04)',
+    md: '0 2px 8px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04)',
+    lg: '0 4px 16px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04)',
+    xl: '0 8px 32px rgba(15, 23, 42, 0.12), 0 2px 8px rgba(15, 23, 42, 0.06)',
+    header: '0 1px 3px rgba(15, 23, 42, 0.1), 0 1px 2px rgba(15, 23, 42, 0.06)',
+  },
+
+  transition: {
+    fast: '120ms ease-out',
+    normal: '200ms ease-out',
+    slow: '300ms ease-out',
+  },
 };
 
-/** Reusable style objects shared across components */
+/** Shared style objects */
 export const shared = {
   card: {
     background: theme.colors.bg.card,
     border: `1px solid ${theme.colors.border.default}`,
     borderRadius: theme.radius.lg,
-    padding: theme.spacing.md,
+    padding: theme.spacing.lg,
+    boxShadow: theme.shadow.sm,
+    transition: `box-shadow ${theme.transition.normal}, border-color ${theme.transition.normal}`,
   },
+
+  cardElevated: {
+    background: theme.colors.bg.card,
+    border: `1px solid ${theme.colors.border.subtle}`,
+    borderRadius: theme.radius.lg,
+    padding: theme.spacing.lg,
+    boxShadow: theme.shadow.md,
+  },
+
   dashedInput: {
     width: '100%',
-    padding: '5px 9px',
-    border: `1px dashed ${theme.colors.border.dashed}`,
-    borderRadius: theme.radius.sm,
+    padding: '10px 14px',
+    border: `1.5px solid ${theme.colors.border.default}`,
+    borderRadius: theme.radius.md,
     fontSize: theme.font.body,
     fontFamily: 'inherit',
     resize: 'vertical',
     background: theme.colors.bg.muted,
     boxSizing: 'border-box',
+    lineHeight: 1.6,
+    transition: `border-color ${theme.transition.fast}`,
+    color: theme.colors.text.primary,
   },
+
   sectionHeader: {
     display: 'flex',
     alignItems: 'baseline',
-    gap: 10,
-    borderBottom: `2px solid ${theme.colors.text.muted}`,
-    paddingBottom: 5,
-    marginBottom: 8,
+    gap: 12,
+    borderBottom: `2px solid ${theme.colors.text.primary}`,
+    paddingBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.md,
   },
+
   subSectionHeader: {
     display: 'flex',
     alignItems: 'center',
-    gap: 10,
-    borderBottom: `2px solid ${theme.colors.border.default}`,
-    paddingBottom: 4,
-    marginBottom: 8,
+    gap: 12,
+    borderBottom: `1.5px solid ${theme.colors.border.default}`,
+    paddingBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.md,
   },
+
   checkbox: {
-    width: 17,
-    height: 17,
+    width: 18,
+    height: 18,
     accentColor: theme.colors.accent.indigo,
     cursor: 'pointer',
     flexShrink: 0,
+  },
+
+  badge: {
+    fontSize: theme.font.xs,
+    fontWeight: 600,
+    padding: '2px 10px',
+    borderRadius: theme.radius.full,
+    whiteSpace: 'nowrap',
+    letterSpacing: '0.01em',
+  },
+
+  buttonPrimary: {
+    padding: '8px 20px',
+    borderRadius: theme.radius.md,
+    border: 'none',
+    fontSize: theme.font.body,
+    fontWeight: 600,
+    cursor: 'pointer',
+    transition: `all ${theme.transition.fast}`,
+    letterSpacing: '0.01em',
   },
 };

@@ -8,9 +8,6 @@ import OutroBlock from './OutroBlock';
 import CaseBlock from './CaseBlock';
 import QuestionCard from './QuestionCard';
 
-/**
- * Renders a single section: header, type-specific block, and question cards.
- */
 const SectionRenderer = memo(({
   section,
   sectionNum,
@@ -29,15 +26,51 @@ const SectionRenderer = memo(({
   const rtiGreyed = section.type === 'rti' && isZweit && erst.rtiDone;
 
   return (
-    <div id={`section-${section.id}`} style={{ marginBottom: 24 }}>
+    <div id={`section-${section.id}`} style={{ marginBottom: theme.spacing.xl }}>
       {/* Main section header */}
       {section.main && (
-        <div style={shared.sectionHeader}>
-          <span style={{ fontSize: theme.font.xl, fontWeight: 700 }}>
-            {sectionNum.mainNumber}. {section.main}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'baseline',
+            gap: 12,
+            borderBottom: `2px solid ${theme.colors.text.primary}`,
+            paddingBottom: 10,
+            marginBottom: theme.spacing.md,
+          }}
+        >
+          <span
+            style={{
+              fontSize: 28,
+              fontWeight: 800,
+              color: theme.colors.text.primary,
+              letterSpacing: '-0.5px',
+              lineHeight: 1,
+            }}
+          >
+            {sectionNum.mainNumber}.
+          </span>
+          <span
+            style={{
+              fontSize: theme.font.xl,
+              fontWeight: 700,
+              color: theme.colors.text.primary,
+            }}
+          >
+            {section.main}
           </span>
           {section.time && !section.sub && (
-            <span style={{ fontSize: theme.font.sm, color: theme.colors.text.muted, fontWeight: 500 }}>
+            <span
+              style={{
+                fontSize: theme.font.sm,
+                color: theme.colors.text.muted,
+                fontWeight: 500,
+                marginLeft: 'auto',
+                padding: '3px 10px',
+                background: theme.colors.bg.muted,
+                borderRadius: theme.radius.full,
+              }}
+            >
               {section.time}
             </span>
           )}
@@ -46,7 +79,16 @@ const SectionRenderer = memo(({
 
       {/* Sub-section header */}
       {section.sub && (
-        <div style={shared.subSectionHeader}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            borderBottom: `1.5px solid ${theme.colors.border.default}`,
+            paddingBottom: 10,
+            marginBottom: theme.spacing.md,
+          }}
+        >
           {section.isCase && (
             <input
               type="checkbox"
@@ -56,16 +98,45 @@ const SectionRenderer = memo(({
               aria-label={`Case ${section.caseKey} durchgeführt`}
             />
           )}
-          <span style={{ fontSize: theme.font.lg, fontWeight: 600, color: theme.colors.text.secondary }}>
-            {sectionNum.subNumber} {section.sub}
+          <span
+            style={{
+              fontSize: theme.font.md,
+              fontWeight: 500,
+              color: theme.colors.text.muted,
+              minWidth: 32,
+            }}
+          >
+            {sectionNum.subNumber}
+          </span>
+          <span style={{ fontSize: theme.font.lg, fontWeight: 600, color: theme.colors.text.primary }}>
+            {section.sub}
           </span>
           {section.time && (
-            <span style={{ fontSize: theme.font.sm, color: theme.colors.text.muted }}>
+            <span
+              style={{
+                fontSize: theme.font.sm,
+                color: theme.colors.text.muted,
+                fontWeight: 500,
+                marginLeft: 'auto',
+                padding: '3px 10px',
+                background: theme.colors.bg.muted,
+                borderRadius: theme.radius.full,
+              }}
+            >
               {section.time}
             </span>
           )}
           {caseGreyed && (
-            <span style={{ fontSize: theme.font.xs, color: theme.colors.text.muted, fontStyle: 'italic' }}>
+            <span
+              style={{
+                fontSize: theme.font.xs,
+                color: theme.colors.success.text,
+                fontWeight: 500,
+                padding: '3px 10px',
+                background: theme.colors.success.bg,
+                borderRadius: theme.radius.full,
+              }}
+            >
               &#10003; Im EG durchgeführt
             </span>
           )}
@@ -79,14 +150,17 @@ const SectionRenderer = memo(({
             background: theme.colors.hint.bg,
             border: `1px solid ${theme.colors.hint.border}`,
             borderRadius: theme.radius.md,
-            padding: '6px 10px',
-            fontSize: theme.font.sm,
+            padding: '10px 16px',
+            fontSize: theme.font.body,
             color: theme.colors.hint.text,
-            marginBottom: theme.spacing.sm,
-            lineHeight: 1.5,
+            marginBottom: theme.spacing.md,
+            lineHeight: 1.6,
+            display: 'flex',
+            gap: 8,
           }}
         >
-          &#9432; {section.hint}
+          <span style={{ fontWeight: 700, flexShrink: 0 }}>Tipp:</span>
+          <span>{section.hint}</span>
         </div>
       )}
 
@@ -114,10 +188,8 @@ const SectionRenderer = memo(({
         />
       )}
 
-      {/* Case text */}
       {section.caseText && <CaseBlock caseText={section.caseText} greyed={caseGreyed} />}
 
-      {/* Questions */}
       {section.questions?.map((question) => {
         const isNonCaseGreyed = !section.isCase && isZweit && erst.checks[question.id];
         const greyed = isNonCaseGreyed || (section.isCase && caseGreyed);

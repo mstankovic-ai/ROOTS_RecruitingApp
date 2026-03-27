@@ -3,10 +3,6 @@ import { DIMENSION_COLORS } from '../data/dimensions';
 import { theme } from '../theme';
 import Badge from './Badge';
 
-/**
- * Single evaluation row with expandable anchor texts and 1-5 rating buttons.
- * Supports keyboard shortcuts: press 1-5 when focused to rate.
- */
 const EvalRow = memo(({ evaluation, rating, erstRating, onRate }) => {
   const [isOpen, setIsOpen] = useState(false);
   const color = DIMENSION_COLORS[evaluation.dimension];
@@ -27,47 +23,59 @@ const EvalRow = memo(({ evaluation, rating, erstRating, onRate }) => {
   return (
     <div
       style={{
-        marginTop: theme.spacing.xs,
+        marginTop: theme.spacing.sm,
         border: `1px solid ${theme.colors.border.default}`,
         borderRadius: theme.radius.md,
         overflow: 'hidden',
-        background: theme.colors.eval.bg,
+        background: theme.colors.bg.card,
+        boxShadow: theme.shadow.sm,
+        transition: `box-shadow ${theme.transition.fast}`,
       }}
       tabIndex={0}
       onKeyDown={handleKeyDown}
       role="group"
       aria-label={`Bewertung: ${evaluation.label}`}
     >
-      {/* Header row */}
       <div
         onClick={() => setIsOpen((prev) => !prev)}
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 6,
-          padding: `6px ${theme.spacing.md - 4}px`,
+          gap: 8,
+          padding: '10px 14px',
           cursor: 'pointer',
           userSelect: 'none',
         }}
       >
         <span
           style={{
-            fontSize: theme.font.sm,
+            fontSize: 10,
+            color: theme.colors.text.muted,
             transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)',
-            transition: 'transform 150ms',
+            transition: `transform ${theme.transition.fast}`,
             flexShrink: 0,
           }}
           aria-hidden="true"
         >
           &#9654;
         </span>
-        <span style={{ fontSize: theme.font.body, fontWeight: 600, flex: 1 }}>
+        <span style={{ fontSize: theme.font.body, fontWeight: 600, flex: 1, color: theme.colors.text.primary }}>
           {evaluation.label}
         </span>
         <Badge dimension={evaluation.dimension} />
-        <div style={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 3, alignItems: 'center', marginLeft: 4 }}>
           {isInherited && (
-            <span style={{ fontSize: 9, color: theme.colors.text.muted, marginRight: 4 }}>
+            <span
+              style={{
+                fontSize: theme.font.xs,
+                color: theme.colors.text.muted,
+                marginRight: 6,
+                fontWeight: 500,
+                padding: '2px 6px',
+                borderRadius: theme.radius.sm,
+                background: theme.colors.bg.muted,
+              }}
+            >
               EG
             </span>
           )}
@@ -83,18 +91,21 @@ const EvalRow = memo(({ evaluation, rating, erstRating, onRate }) => {
                 aria-label={`Bewertung ${n}`}
                 aria-pressed={isActive}
                 style={{
-                  width: 26,
-                  height: 26,
+                  width: 32,
+                  height: 32,
                   borderRadius: theme.radius.sm,
-                  border: isActive ? `2px solid ${color}` : `1.5px solid #d1d5db`,
-                  background: isActive ? `${color}${isInherited ? '10' : '20'}` : theme.colors.bg.card,
+                  border: isActive ? `2px solid ${color}` : `1.5px solid ${theme.colors.border.default}`,
+                  background: isActive ? `${color}18` : theme.colors.bg.card,
                   fontSize: theme.font.body,
                   fontWeight: 700,
-                  color: isActive ? color : '#9ca3af',
+                  color: isActive ? color : theme.colors.text.muted,
                   cursor: 'pointer',
                   padding: 0,
-                  opacity: isInherited && !isActive ? 0.5 : 1,
-                  transition: 'all 150ms',
+                  opacity: isInherited && !isActive ? 0.4 : 1,
+                  transition: `all ${theme.transition.fast}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
                 {n}
@@ -104,23 +115,75 @@ const EvalRow = memo(({ evaluation, rating, erstRating, onRate }) => {
         </div>
       </div>
 
-      {/* Expandable anchor texts */}
       {isOpen && (
         <div
           style={{
-            padding: `${theme.spacing.xs}px ${theme.spacing.md - 4}px ${theme.spacing.sm}px`,
-            fontSize: theme.font.sm,
-            lineHeight: 1.6,
-            color: theme.colors.text.secondary,
+            padding: '0 14px 14px',
+            borderTop: `1px solid ${theme.colors.border.subtle}`,
+            marginTop: 0,
           }}
         >
-          <div style={{ display: 'grid', gridTemplateColumns: '32px 1fr', gap: '3px 6px' }}>
-            <span style={{ fontWeight: 700, color: theme.colors.danger.text }}>1</span>
-            <span>{evaluation.anchor1}</span>
-            <span style={{ fontWeight: 700, color: '#d97706' }}>3</span>
-            <span>{evaluation.anchor3}</span>
-            <span style={{ fontWeight: 700, color: theme.colors.success.text }}>5</span>
-            <span>{evaluation.anchor5}</span>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '40px 1fr',
+              gap: '8px 12px',
+              paddingTop: 12,
+              fontSize: theme.font.sm,
+              lineHeight: 1.6,
+              color: theme.colors.text.secondary,
+            }}
+          >
+            <span
+              style={{
+                fontWeight: 700,
+                color: theme.colors.danger.text,
+                fontSize: theme.font.body,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: '#FEF2F2',
+                borderRadius: theme.radius.sm,
+                height: 28,
+              }}
+            >
+              1
+            </span>
+            <span style={{ paddingTop: 4 }}>{evaluation.anchor1}</span>
+
+            <span
+              style={{
+                fontWeight: 700,
+                color: '#D97706',
+                fontSize: theme.font.body,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: '#FFFBEB',
+                borderRadius: theme.radius.sm,
+                height: 28,
+              }}
+            >
+              3
+            </span>
+            <span style={{ paddingTop: 4 }}>{evaluation.anchor3}</span>
+
+            <span
+              style={{
+                fontWeight: 700,
+                color: theme.colors.success.text,
+                fontSize: theme.font.body,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: theme.colors.success.bg,
+                borderRadius: theme.radius.sm,
+                height: 28,
+              }}
+            >
+              5
+            </span>
+            <span style={{ paddingTop: 4 }}>{evaluation.anchor5}</span>
           </div>
         </div>
       )}

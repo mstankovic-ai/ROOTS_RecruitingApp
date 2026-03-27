@@ -3,10 +3,6 @@ import { theme, shared } from '../theme';
 import { actions } from '../hooks/useInterviewState';
 import EvalRow from './EvalRow';
 
-/**
- * Renders a single interview question with checkbox, notes, observation checks, and eval rows.
- * Memoized to prevent re-renders when sibling questions change.
- */
 const QuestionCard = memo(({
   question,
   checks,
@@ -35,49 +31,88 @@ const QuestionCard = memo(({
   return (
     <div
       style={{
-        background: greyed ? theme.colors.bg.primary : theme.colors.bg.card,
+        background: greyed ? theme.colors.bg.muted : theme.colors.bg.card,
         border: isChecked
-          ? `1.5px solid ${theme.colors.accent.indigo}`
+          ? `2px solid ${theme.colors.accent.indigo}`
           : `1px solid ${theme.colors.border.default}`,
         borderRadius: theme.radius.lg,
-        padding: `${theme.spacing.md - 4}px ${theme.spacing.md}px`,
-        marginBottom: theme.spacing.sm,
-        transition: 'all 150ms',
-        opacity: greyed ? 0.55 : 1,
+        padding: theme.spacing.lg,
+        marginBottom: theme.spacing.sm + 4,
+        transition: `all ${theme.transition.normal}`,
+        opacity: greyed ? 0.5 : 1,
+        boxShadow: isChecked ? `0 0 0 3px ${theme.colors.accent.indigo}15` : theme.shadow.sm,
       }}
       className="q-card"
     >
       {greyed && (
-        <div style={{ fontSize: theme.font.xs, color: theme.colors.text.muted, marginBottom: theme.spacing.xs, fontStyle: 'italic' }}>
-          &#10003; Im Erstgespräch gestellt
+        <div
+          style={{
+            fontSize: theme.font.xs,
+            color: theme.colors.text.muted,
+            marginBottom: theme.spacing.sm,
+            fontStyle: 'italic',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 4,
+          }}
+        >
+          <span style={{ color: theme.colors.success.badge }}>&#10003;</span> Im Erstgespräch gestellt
         </div>
       )}
 
-      <div style={{ display: 'flex', gap: theme.spacing.sm, alignItems: 'flex-start' }}>
+      <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
         {!hideCheck && (
           <input
             type="checkbox"
             checked={isChecked}
             onChange={handleToggleCheck}
-            style={{ ...shared.checkbox, marginTop: 3 }}
+            style={{ ...shared.checkbox, marginTop: 4 }}
             aria-label="Frage gestellt"
           />
         )}
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: theme.font.md, lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
+          <div
+            style={{
+              fontSize: theme.font.md,
+              lineHeight: 1.7,
+              whiteSpace: 'pre-wrap',
+              color: theme.colors.text.primary,
+              fontWeight: 450,
+            }}
+          >
             {question.text}
           </div>
           {question.followUp && (
-            <div style={{ fontSize: theme.font.body, color: theme.colors.accent.indigo, marginTop: 3, fontStyle: 'italic' }}>
+            <div
+              style={{
+                fontSize: theme.font.body,
+                color: theme.colors.accent.indigo,
+                marginTop: 6,
+                fontStyle: 'italic',
+                lineHeight: 1.5,
+                paddingLeft: 12,
+                borderLeft: `2px solid ${theme.colors.accent.indigoMid}`,
+              }}
+            >
               {question.followUp}
             </div>
           )}
         </div>
       </div>
 
-      {/* Observation checkboxes (e.g. Selbstvorstellung criteria) */}
+      {/* Observation checkboxes */}
       {question.checks && (
-        <div style={{ margin: '6px 0 2px 25px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <div
+          style={{
+            margin: `${theme.spacing.sm}px 0 4px 30px`,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 4,
+            padding: '10px 14px',
+            background: theme.colors.bg.muted,
+            borderRadius: theme.radius.md,
+          }}
+        >
           {question.checks.map((checkText, i) => (
             <label
               key={i}
@@ -85,16 +120,17 @@ const QuestionCard = memo(({
                 fontSize: theme.font.body,
                 color: theme.colors.text.secondary,
                 display: 'flex',
-                gap: 5,
+                gap: 8,
                 alignItems: 'flex-start',
                 cursor: 'pointer',
+                lineHeight: 1.5,
               }}
             >
               <input
                 type="checkbox"
                 checked={!!(observations[question.id] || {})[i]}
                 onChange={() => dispatch(actions.toggleObservation(question.id, i))}
-                style={{ marginTop: 2, accentColor: theme.colors.accent.indigo }}
+                style={{ marginTop: 3, accentColor: theme.colors.accent.indigo }}
               />
               <span>{checkText}</span>
             </label>
@@ -106,26 +142,30 @@ const QuestionCard = memo(({
       {isZweit && erstNote && (
         <div
           style={{
-            marginTop: 6,
-            padding: '5px 9px',
-            borderRadius: theme.radius.sm,
+            marginTop: theme.spacing.sm,
+            padding: '10px 14px',
+            borderRadius: theme.radius.md,
             background: theme.colors.info.bg,
             fontSize: theme.font.sm,
             color: theme.colors.info.text,
-            lineHeight: 1.5,
+            lineHeight: 1.6,
+            border: `1px solid ${theme.colors.info.border}`,
           }}
         >
-          <span style={{ fontWeight: 600 }}>Notizen EG:</span> {erstNote}
+          <span style={{ fontWeight: 700 }}>Notizen EG:</span> {erstNote}
         </div>
       )}
 
       {/* Notes textarea */}
       <textarea
-        placeholder="Notizen …"
+        placeholder="Notizen ..."
         value={notes[question.id] || ''}
         onChange={handleNoteChange}
         rows={2}
-        style={{ ...shared.dashedInput, marginTop: 6 }}
+        style={{
+          ...shared.dashedInput,
+          marginTop: theme.spacing.sm + 4,
+        }}
         className="note-field"
       />
 

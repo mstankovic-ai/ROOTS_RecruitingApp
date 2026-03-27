@@ -78,7 +78,6 @@ export default function App() {
         color: theme.colors.text.primary,
       }}
     >
-      <style>{`@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:10px}.no-print{display:none!important}.note-field{border:1px solid #ccc!important;min-height:30px}.q-card{break-inside:avoid;page-break-inside:avoid}}`}</style>
 
       {showSwitchDialog && (
         <RoundSwitchDialog
@@ -106,10 +105,10 @@ export default function App() {
 
       <div
         style={{
-          padding: `${theme.spacing.md}px 18px`,
-          maxWidth: 920,
+          padding: `${theme.spacing.lg}px ${theme.spacing.xl}px`,
+          maxWidth: 880,
           margin: '0 auto',
-          marginLeft: 220,
+          marginLeft: 240,
         }}
       >
         {/* Zweitgespräch: notes from first interviewer */}
@@ -119,8 +118,9 @@ export default function App() {
               background: theme.colors.warning.bg,
               border: `1px solid ${theme.colors.warning.border}`,
               borderRadius: theme.radius.lg,
-              padding: theme.spacing.md,
+              padding: theme.spacing.lg,
               marginBottom: theme.spacing.lg,
+              boxShadow: theme.shadow.sm,
             }}
           >
             <div

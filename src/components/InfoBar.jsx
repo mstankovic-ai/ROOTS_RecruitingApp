@@ -1,20 +1,21 @@
 import { memo } from 'react';
 import { theme } from '../theme';
 
-/** Blue info bar below the header with usage instructions */
 const InfoBar = memo(({ isZweit }) => (
   <div
     style={{
       background: theme.colors.info.bg,
-      padding: `${theme.spacing.sm}px ${theme.spacing.lg}px`,
+      padding: `12px 32px 12px 252px`,
       fontSize: theme.font.body,
       color: theme.colors.info.text,
-      lineHeight: 1.5,
+      lineHeight: 1.6,
       borderBottom: `1px solid ${theme.colors.info.border}`,
+      fontWeight: 450,
     }}
     className="no-print"
   >
-    &#9432; Wähle pro Phase Fragen aus, hake gestellte ab, notiere Stichworte und bewerte per
+    <span style={{ fontWeight: 700 }}>Hinweis:</span>{' '}
+    Wähle pro Phase Fragen aus, hake gestellte ab, notiere Stichworte und bewerte per
     ausklappbarem Evaluationsanker.{' '}
     {isZweit &&
       'Grau hinterlegte Fragen wurden im Erstgespräch bereits gestellt. Bewertungen (EG) und Notizen (Notizen EG) sind übernommen. '}

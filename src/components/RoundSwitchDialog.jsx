@@ -1,13 +1,13 @@
 import { memo } from 'react';
 import { theme } from '../theme';
 
-/** Confirmation dialog when switching from Erst- to Zweitgespräch */
 const RoundSwitchDialog = memo(({ onConfirm, onCancel }) => (
   <div
     style={{
       position: 'fixed',
       inset: 0,
-      background: 'rgba(0,0,0,.45)',
+      background: 'rgba(15, 23, 42, 0.5)',
+      backdropFilter: 'blur(4px)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -23,24 +23,40 @@ const RoundSwitchDialog = memo(({ onConfirm, onCancel }) => (
       style={{
         background: theme.colors.bg.card,
         borderRadius: theme.radius.xl,
-        padding: 24,
-        maxWidth: 420,
+        padding: 32,
+        maxWidth: 440,
         width: '90%',
-        boxShadow: '0 8px 32px rgba(0,0,0,.2)',
+        boxShadow: theme.shadow.xl,
+        border: `1px solid ${theme.colors.border.default}`,
       }}
     >
-      <div style={{ fontSize: theme.font.xl, fontWeight: 700, marginBottom: theme.spacing.sm }}>
+      <div
+        style={{
+          width: 48,
+          height: 48,
+          borderRadius: theme.radius.md,
+          background: theme.colors.info.bg,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 22,
+          marginBottom: theme.spacing.md,
+        }}
+      >
+        &#8644;
+      </div>
+      <div style={{ fontSize: theme.font.xl, fontWeight: 700, marginBottom: theme.spacing.sm, color: theme.colors.text.primary }}>
         Zum Zweitgespräch wechseln?
       </div>
-      <div style={{ fontSize: theme.font.md, color: theme.colors.text.secondary, lineHeight: 1.6, marginBottom: theme.spacing.lg }}>
+      <div style={{ fontSize: theme.font.md, color: theme.colors.text.secondary, lineHeight: 1.7, marginBottom: theme.spacing.lg }}>
         Die Ansicht wechselt zum Zweitgespräch. Ist das Erstgespräch abgeschlossen?
         Bewertungen und Notizen des Erstgesprächs bleiben erhalten.
       </div>
-      <div style={{ display: 'flex', gap: theme.spacing.sm, justifyContent: 'flex-end' }}>
+      <div style={{ display: 'flex', gap: theme.spacing.sm + 4, justifyContent: 'flex-end' }}>
         <button
           onClick={onCancel}
           style={{
-            padding: '8px 18px',
+            padding: '10px 22px',
             borderRadius: theme.radius.md,
             border: `1.5px solid ${theme.colors.border.default}`,
             background: theme.colors.bg.card,
@@ -48,6 +64,7 @@ const RoundSwitchDialog = memo(({ onConfirm, onCancel }) => (
             fontSize: theme.font.md,
             fontWeight: 600,
             cursor: 'pointer',
+            transition: `all ${theme.transition.fast}`,
           }}
         >
           Abbrechen
@@ -55,14 +72,16 @@ const RoundSwitchDialog = memo(({ onConfirm, onCancel }) => (
         <button
           onClick={onConfirm}
           style={{
-            padding: '8px 18px',
+            padding: '10px 22px',
             borderRadius: theme.radius.md,
             border: 'none',
-            background: theme.colors.bg.header,
+            background: theme.colors.accent.indigo,
             color: theme.colors.text.white,
             fontSize: theme.font.md,
             fontWeight: 600,
             cursor: 'pointer',
+            transition: `all ${theme.transition.fast}`,
+            boxShadow: `0 2px 8px ${theme.colors.accent.indigo}40`,
           }}
         >
           Ja, wechseln

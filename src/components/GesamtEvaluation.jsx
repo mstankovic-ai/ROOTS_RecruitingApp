@@ -3,9 +3,6 @@ import { DIMENSIONS, DIMENSION_COLORS } from '../data/dimensions';
 import { theme, shared } from '../theme';
 import { actions } from '../hooks/useInterviewState';
 
-/**
- * Overall evaluation panel: dimension scores, overall impression, recommendation.
- */
 const GesamtEvaluation = memo(({
   dimScores,
   isZweit,
@@ -29,32 +26,38 @@ const GesamtEvaluation = memo(({
   );
 
   return (
-    <div style={{ marginTop: theme.spacing.xl, marginBottom: 40 }}>
+    <div style={{ marginTop: theme.spacing.xxl, marginBottom: theme.spacing.xxl, paddingBottom: theme.spacing.xxl }}>
+      {/* Section title */}
       <div
         style={{
-          fontSize: theme.font.title,
+          fontSize: 28,
           fontWeight: 800,
+          letterSpacing: '-0.5px',
           borderBottom: `3px solid ${theme.colors.text.primary}`,
-          paddingBottom: 5,
-          marginBottom: theme.spacing.md,
+          paddingBottom: 12,
+          marginBottom: theme.spacing.lg,
+          color: theme.colors.text.primary,
         }}
       >
         Gesamtevaluation
       </div>
 
-      {/* Dimension scores grid */}
-      <div
-        style={{
-          ...shared.card,
-          borderRadius: theme.radius.xl,
-          padding: 16,
-          marginBottom: theme.spacing.md,
-        }}
-      >
-        <div style={{ fontSize: theme.font.md, fontWeight: 700, marginBottom: 10 }}>
+      {/* Dimension scores */}
+      <div style={{ ...shared.cardElevated, marginBottom: theme.spacing.md }}>
+        <div
+          style={{
+            fontSize: theme.font.xs,
+            fontWeight: 600,
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em',
+            color: theme.colors.text.muted,
+            marginBottom: theme.spacing.md,
+          }}
+        >
           Score pro Evaluationsdimension
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: theme.spacing.sm }}>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: theme.spacing.sm + 4 }}>
           {Object.keys(DIMENSIONS).map((dimKey) => {
             const avg = dimScores.averages[dimKey];
             const count = dimScores.perDimension[dimKey].count;
@@ -66,32 +69,37 @@ const GesamtEvaluation = memo(({
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 6,
-                  padding: '7px 10px',
+                  gap: 10,
+                  padding: '12px 16px',
                   borderRadius: theme.radius.md,
-                  background: avg ? `${color}08` : theme.colors.bg.muted,
-                  border: `1px solid ${avg ? `${color}30` : theme.colors.border.default}`,
+                  background: avg ? `${color}06` : theme.colors.bg.muted,
+                  border: `1px solid ${avg ? `${color}20` : theme.colors.border.subtle}`,
+                  transition: `all ${theme.transition.normal}`,
                 }}
               >
-                <span
+                <div
                   style={{
-                    width: 9,
-                    height: 9,
-                    borderRadius: 99,
+                    width: 10,
+                    height: 10,
+                    borderRadius: theme.radius.full,
                     background: color,
                     flexShrink: 0,
+                    boxShadow: avg ? `0 0 6px ${color}40` : 'none',
                   }}
                 />
-                <span style={{ fontSize: theme.font.body, flex: 1 }}>{DIMENSIONS[dimKey]}</span>
-                <span style={{ fontSize: theme.font.xs, color: theme.colors.text.muted }}>
+                <span style={{ fontSize: theme.font.body, flex: 1, fontWeight: 500, color: theme.colors.text.primary }}>
+                  {DIMENSIONS[dimKey]}
+                </span>
+                <span style={{ fontSize: theme.font.xs, color: theme.colors.text.muted, fontWeight: 500 }}>
                   {count > 0 ? `${count} Bew.` : ''}
                 </span>
                 <span
                   style={{
-                    fontSize: 16,
+                    fontSize: 20,
                     fontWeight: 800,
+                    fontFamily: theme.fontMono,
                     color: avg ? color : theme.colors.border.dashed,
-                    minWidth: 32,
+                    minWidth: 40,
                     textAlign: 'right',
                   }}
                 >
@@ -105,24 +113,24 @@ const GesamtEvaluation = memo(({
         {/* Overall score bar */}
         <div
           style={{
-            marginTop: theme.font.body,
+            marginTop: theme.spacing.lg,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'flex-end',
-            gap: 10,
-            padding: '10px 14px',
+            gap: 12,
+            padding: '14px 20px',
             background: theme.colors.bg.header,
             borderRadius: theme.radius.md,
             color: theme.colors.text.white,
           }}
         >
-          <span style={{ fontSize: theme.font.md, fontWeight: 600 }}>
+          <span style={{ fontSize: theme.font.md, fontWeight: 500, opacity: 0.7 }}>
             Gesamtscore (&#216; Dimensionen):
           </span>
-          <span style={{ fontSize: 22, fontWeight: 800 }}>
+          <span style={{ fontSize: 28, fontWeight: 800, fontFamily: theme.fontMono, letterSpacing: '-0.5px' }}>
             {dimScores.overall ? dimScores.overall.toFixed(1) : '\u2013'}
           </span>
-          <span style={{ fontSize: theme.font.body, opacity: 0.6 }}>/ 5.0</span>
+          <span style={{ fontSize: theme.font.body, opacity: 0.4, fontWeight: 500 }}>/ 5.0</span>
         </div>
       </div>
 
@@ -132,31 +140,40 @@ const GesamtEvaluation = memo(({
           style={{
             background: theme.colors.info.bg,
             border: `1px solid ${theme.colors.info.border}`,
-            borderRadius: theme.radius.xl,
-            padding: theme.spacing.md,
-            marginBottom: 10,
+            borderRadius: theme.radius.lg,
+            padding: theme.spacing.lg,
+            marginBottom: theme.spacing.md,
           }}
         >
-          <div style={{ fontSize: theme.font.body, fontWeight: 600, color: theme.colors.info.text, marginBottom: theme.spacing.xs }}>
-            Gesamteindruck Erstgespräch:
+          <div style={{ fontSize: theme.font.xs, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: theme.colors.info.text, marginBottom: theme.spacing.sm }}>
+            Gesamteindruck Erstgespräch
           </div>
-          <div style={{ fontSize: theme.font.body, color: theme.colors.info.text, lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>
+          <div style={{ fontSize: theme.font.body, color: theme.colors.info.text, lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
             {erst.gesamtNote}
           </div>
         </div>
       )}
 
       {/* Gesamteindruck textarea */}
-      <div style={{ ...shared.card, borderRadius: theme.radius.xl, padding: 16, marginBottom: theme.spacing.md }}>
-        <div style={{ fontSize: theme.font.md, fontWeight: 700, marginBottom: theme.spacing.sm }}>
+      <div style={{ ...shared.cardElevated, marginBottom: theme.spacing.md }}>
+        <div
+          style={{
+            fontSize: theme.font.xs,
+            fontWeight: 600,
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em',
+            color: theme.colors.text.muted,
+            marginBottom: theme.spacing.sm + 4,
+          }}
+        >
           Gesamteindruck{isZweit ? ' Zweitgespräch' : ''}
         </div>
         <textarea
-          placeholder="Freitext-Notizen zum Gesamteindruck …"
+          placeholder="Freitext-Notizen zum Gesamteindruck ..."
           value={currentState.gesamtNote}
           onChange={handleGesamtNote}
           rows={4}
-          style={{ ...shared.dashedInput, padding: '8px 10px', borderRadius: 6 }}
+          style={shared.dashedInput}
         />
       </div>
 
@@ -165,14 +182,24 @@ const GesamtEvaluation = memo(({
         style={{
           background: theme.colors.bg.card,
           border: `2px solid ${theme.colors.border.strong}`,
-          borderRadius: theme.radius.xl,
-          padding: 16,
+          borderRadius: theme.radius.lg,
+          padding: theme.spacing.lg,
+          boxShadow: theme.shadow.md,
         }}
       >
-        <div style={{ fontSize: theme.font.md, fontWeight: 700, marginBottom: 10 }}>
+        <div
+          style={{
+            fontSize: theme.font.xs,
+            fontWeight: 600,
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em',
+            color: theme.colors.text.muted,
+            marginBottom: theme.spacing.md,
+          }}
+        >
           Empfehlung
         </div>
-        <div style={{ display: 'flex', gap: theme.spacing.sm, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: theme.spacing.sm + 4, flexWrap: 'wrap' }}>
           {options.map((opt) => {
             const isSelected = currentState.recommendation === opt;
             return (
@@ -180,29 +207,42 @@ const GesamtEvaluation = memo(({
                 key={opt}
                 onClick={() => dispatch(actions.setRecommendation(opt))}
                 style={{
-                  padding: '8px 18px',
+                  padding: '10px 24px',
                   borderRadius: theme.radius.md,
-                  border: isSelected ? `2px solid ${theme.colors.border.strong}` : '1.5px solid #d1d5db',
+                  border: isSelected ? `2px solid ${theme.colors.border.strong}` : `1.5px solid ${theme.colors.border.default}`,
                   background: isSelected ? theme.colors.bg.header : theme.colors.bg.card,
-                  color: isSelected ? theme.colors.text.white : '#475569',
+                  color: isSelected ? theme.colors.text.white : theme.colors.text.secondary,
                   fontSize: theme.font.md,
                   fontWeight: 600,
                   cursor: 'pointer',
-                  transition: 'all 150ms',
+                  transition: `all ${theme.transition.fast}`,
+                  letterSpacing: '0.01em',
+                  boxShadow: isSelected ? theme.shadow.md : 'none',
                 }}
               >
-                {isSelected ? '\u2713 ' : ''}
+                {isSelected && (
+                  <span style={{ marginRight: 6 }}>&#10003;</span>
+                )}
                 {opt}
               </button>
             );
           })}
         </div>
 
-        {/* Anmerkungen für Zweitinterviewer (only Erst, when invited) */}
-        {!isZweit && (canSwitchToZweit) && (
-          <div style={{ marginTop: theme.spacing.md, borderTop: `1px solid ${theme.colors.border.default}`, paddingTop: 12 }}>
-            <div style={{ fontSize: theme.font.md, fontWeight: 700, marginBottom: 6, color: theme.colors.warning.text }}>
-              &#128221; Anmerkungen für den Zweitinterviewer
+        {/* Anmerkungen für Zweitinterviewer */}
+        {!isZweit && canSwitchToZweit && (
+          <div style={{ marginTop: theme.spacing.lg, borderTop: `1px solid ${theme.colors.border.default}`, paddingTop: theme.spacing.md }}>
+            <div
+              style={{
+                fontSize: theme.font.xs,
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+                color: theme.colors.warning.text,
+                marginBottom: theme.spacing.sm + 4,
+              }}
+            >
+              Anmerkungen für den Zweitinterviewer
             </div>
             <textarea
               placeholder="Was sollte der Zweitinterviewer wissen oder vertiefen?"
@@ -211,10 +251,8 @@ const GesamtEvaluation = memo(({
               rows={3}
               style={{
                 ...shared.dashedInput,
-                padding: '8px 10px',
-                borderColor: '#d97706',
-                borderRadius: 6,
-                background: theme.colors.hint.bg,
+                borderColor: theme.colors.warning.border,
+                background: theme.colors.warning.bg,
               }}
             />
           </div>
