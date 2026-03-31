@@ -1,7 +1,7 @@
 import { useReducer, useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import { mergeRatings, calculateDimensionScores, calculateWeightedOverall, DEFAULT_WEIGHTS } from '../utils/scoring';
 import { computeSectionNumbers } from '../utils/numbering';
-import { saveToStorage, loadFromStorage } from '../utils/storage';
+import { saveToStorage, loadFromStorage, clearAllStorage } from '../utils/storage';
 
 /** Action types – readable and greppable */
 const TOGGLE_CHECK = 'TOGGLE_CHECK';
@@ -19,6 +19,7 @@ const SET_CULTURE_FIT = 'SET_CULTURE_FIT';
 const SET_TIMER = 'SET_TIMER';
 const SET_WEIGHT = 'SET_WEIGHT';
 const LOAD_STATE = 'LOAD_STATE';
+const RESET_STATE = 'RESET_STATE';
 
 const INITIAL_STATE = {
   checks: {},
@@ -92,6 +93,9 @@ const reducer = (state, action) => {
 
     case LOAD_STATE:
       return { ...action.payload };
+
+    case RESET_STATE:
+      return { ...INITIAL_STATE };
 
     default:
       return state;
@@ -178,6 +182,19 @@ export const useInterviewState = () => {
     [isZweit],
   );
 
+  /** Reset all data – clears localStorage and resets both reducers */
+  const resetAll = useCallback(() => {
+    clearAllStorage();
+    dispatchErst({ type: RESET_STATE });
+    dispatchZweit({ type: RESET_STATE });
+  }, []);
+
+  /** Load a specific candidate's data (e.g. from dashboard) */
+  const loadCandidate = useCallback((data) => {
+    if (data.erst) dispatchErst({ type: LOAD_STATE, payload: data.erst });
+    if (data.zweit) dispatchZweit({ type: LOAD_STATE, payload: data.zweit });
+  }, []);
+
   return {
     erst,
     zweit,
@@ -189,6 +206,8 @@ export const useInterviewState = () => {
     dimScores,
     sectionNumbers,
     saveStatus,
+    resetAll,
+    loadCandidate,
   };
 };
 

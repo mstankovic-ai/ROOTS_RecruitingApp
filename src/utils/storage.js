@@ -57,6 +57,67 @@ export const exportAsJson = (data, filename) => {
 };
 
 /**
+ * Returns all saved candidate interviews from localStorage.
+ * @returns {Array<{ key: string, data: Object }>}
+ */
+export const getAllCandidates = () => {
+  const results = [];
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith(STORAGE_PREFIX) && !key.endsWith('-last-key')) {
+        try {
+          const raw = localStorage.getItem(key);
+          const data = JSON.parse(raw);
+          if (data && data.erst) {
+            results.push({ key, data });
+          }
+        } catch {
+          // skip corrupt entries
+        }
+      }
+    }
+  } catch {
+    // localStorage unavailable
+  }
+  return results;
+};
+
+/**
+ * Clears all ROOTS interview data from localStorage.
+ */
+export const clearAllStorage = () => {
+  try {
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith(STORAGE_PREFIX)) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach((k) => localStorage.removeItem(k));
+  } catch {
+    // localStorage unavailable
+  }
+};
+
+/**
+ * Removes a single candidate entry from localStorage.
+ * @param {string} storageKey
+ */
+export const removeCandidate = (storageKey) => {
+  try {
+    localStorage.removeItem(storageKey);
+    const lastKey = localStorage.getItem(`${STORAGE_PREFIX}last-key`);
+    if (lastKey === storageKey) {
+      localStorage.removeItem(`${STORAGE_PREFIX}last-key`);
+    }
+  } catch {
+    // localStorage unavailable
+  }
+};
+
+/**
  * Exports interview as a readable Markdown report.
  * @param {Object} data - Full interview data including scores
  * @returns {string} Markdown text

@@ -1,8 +1,9 @@
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { theme } from '../theme';
 import { actions } from '../hooks/useInterviewState';
 
-const Header = memo(({ erst, isZweit, canSwitchToZweit, dispatch, saveStatus, onExportJson }) => {
+const Header = memo(({ erst, isZweit, canSwitchToZweit, dispatch, saveStatus, onExportJson, onOpenDashboard, onReset }) => {
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   const meta = erst.meta;
 
   const handleRoundChange = useCallback(
@@ -134,6 +135,45 @@ const Header = memo(({ erst, isZweit, canSwitchToZweit, dispatch, saveStatus, on
           >
             PDF drucken
           </button>
+
+          <button
+            onClick={onOpenDashboard}
+            style={{
+              ...btnStyle,
+              background: 'rgba(99, 102, 241, 0.12)',
+              borderColor: 'rgba(99, 102, 241, 0.3)',
+              color: theme.colors.text.accent,
+            }}
+            aria-label="Dashboard"
+          >
+            Dashboard
+          </button>
+
+          {showResetConfirm ? (
+            <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+              <span style={{ fontSize: theme.font.xs, color: theme.colors.danger.text }}>Alles zurücksetzen?</span>
+              <button
+                onClick={() => { onReset(); setShowResetConfirm(false); }}
+                style={{ ...btnStyle, borderColor: 'rgba(248,113,113,0.4)', color: theme.colors.danger.text, padding: '6px 12px' }}
+              >
+                Ja
+              </button>
+              <button
+                onClick={() => setShowResetConfirm(false)}
+                style={{ ...btnStyle, padding: '6px 12px' }}
+              >
+                Nein
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowResetConfirm(true)}
+              style={{ ...btnStyle, color: theme.colors.text.muted }}
+              aria-label="Zurücksetzen"
+            >
+              Reset
+            </button>
+          )}
         </div>
       </div>
 
