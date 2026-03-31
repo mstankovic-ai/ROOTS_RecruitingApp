@@ -1,4 +1,4 @@
-import { memo, useRef, useCallback, useState } from 'react';
+import { memo, useRef, useCallback, useState, useEffect } from 'react';
 import { theme } from '../theme';
 
 const toolbarBtnStyle = (active) => ({
@@ -22,12 +22,25 @@ const toolbarBtnStyle = (active) => ({
 const RichNoteField = memo(({ value, onChange, placeholder }) => {
   const editorRef = useRef(null);
   const [isFocused, setIsFocused] = useState(false);
+  const isInternalChange = useRef(false);
+
+  // Sync editor content from external value changes only (e.g. loading a candidate).
+  // Skip when the change originated from user input to preserve cursor position.
+  useEffect(() => {
+    if (isInternalChange.current) {
+      isInternalChange.current = false;
+      return;
+    }
+    if (editorRef.current && editorRef.current.innerHTML !== (value || '')) {
+      editorRef.current.innerHTML = value || '';
+    }
+  }, [value]);
 
   const execCmd = useCallback((cmd, val = null) => {
     document.execCommand(cmd, false, val);
     editorRef.current?.focus();
-    // Trigger onChange with updated HTML
     if (editorRef.current) {
+      isInternalChange.current = true;
       onChange(editorRef.current.innerHTML);
     }
   }, [onChange]);
@@ -35,8 +48,8 @@ const RichNoteField = memo(({ value, onChange, placeholder }) => {
   const handleInput = useCallback(() => {
     if (editorRef.current) {
       const html = editorRef.current.innerHTML;
-      // Treat <br> or empty tags as empty
       const isEmpty = html === '<br>' || html === '<div><br></div>' || html === '';
+      isInternalChange.current = true;
       onChange(isEmpty ? '' : html);
     }
   }, [onChange]);
@@ -82,7 +95,6 @@ const RichNoteField = memo(({ value, onChange, placeholder }) => {
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           onPaste={handlePaste}
-          dangerouslySetInnerHTML={{ __html: value || '' }}
           style={{
             width: '100%',
             minHeight: 80,
