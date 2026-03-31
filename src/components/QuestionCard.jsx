@@ -10,8 +10,6 @@ const QuestionCard = memo(({
 }) => {
   const isChecked = !!checks[question.id];
   const handleToggleCheck = useCallback(() => dispatch(actions.toggleCheck(question.id)), [dispatch, question.id]);
-  const handleNoteChange = useCallback((e) => dispatch(actions.setNote(question.id, e.target.value)), [dispatch, question.id]);
-
   return (
     <div
       style={{

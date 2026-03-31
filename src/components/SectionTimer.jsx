@@ -15,22 +15,24 @@ const SectionTimer = memo(({ sectionId, timeStr, timerMinutes, dispatch, setTime
   const [isRunning, setIsRunning] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(configuredMin * 60);
   const [isEditing, setIsEditing] = useState(false);
+  const [started, setStarted] = useState(false);
   const intervalRef = useRef(null);
-  const startedRef = useRef(false);
+  const prevConfiguredMin = useRef(configuredMin);
 
-  // Reset remaining when configured minutes change (and timer hasn't started)
-  useEffect(() => {
-    if (!startedRef.current) {
+  // Sync remaining seconds when configured minutes change (before timer starts)
+  if (prevConfiguredMin.current !== configuredMin) {
+    prevConfiguredMin.current = configuredMin;
+    if (!started) {
       setRemainingSeconds(configuredMin * 60);
     }
-  }, [configuredMin]);
+  }
 
   const startPause = useCallback(() => {
     if (isRunning) {
       clearInterval(intervalRef.current);
       setIsRunning(false);
     } else {
-      startedRef.current = true;
+      setStarted(true);
       setIsRunning(true);
       intervalRef.current = setInterval(() => {
         setRemainingSeconds((prev) => prev - 1);
@@ -41,7 +43,7 @@ const SectionTimer = memo(({ sectionId, timeStr, timerMinutes, dispatch, setTime
   const reset = useCallback(() => {
     clearInterval(intervalRef.current);
     setIsRunning(false);
-    startedRef.current = false;
+    setStarted(false);
     setRemainingSeconds(configuredMin * 60);
   }, [configuredMin]);
 
@@ -65,7 +67,7 @@ const SectionTimer = memo(({ sectionId, timeStr, timerMinutes, dispatch, setTime
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
       {/* Editable minutes (before start) */}
-      {!startedRef.current && (
+      {!started && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           {isEditing ? (
             <input
@@ -117,7 +119,7 @@ const SectionTimer = memo(({ sectionId, timeStr, timerMinutes, dispatch, setTime
         textShadow: isOvertime ? `0 0 8px ${theme.colors.danger.text}50` : 'none',
         transition: `color ${theme.transition.fast}`,
       }}>
-        {startedRef.current ? display : ''}
+        {started ? display : ''}
       </span>
 
       {/* Start/Pause button */}
@@ -138,7 +140,7 @@ const SectionTimer = memo(({ sectionId, timeStr, timerMinutes, dispatch, setTime
       </button>
 
       {/* Reset button */}
-      {startedRef.current && (
+      {started && (
         <button
           onClick={reset}
           style={{

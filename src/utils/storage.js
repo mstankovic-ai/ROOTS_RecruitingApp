@@ -12,13 +12,25 @@ const makeKey = (meta) => {
   return `${STORAGE_PREFIX}draft`;
 };
 
+/** Tracks the previous storage key so we can clean up when it changes */
+let previousKey = null;
+
 /**
  * Saves interview state to localStorage.
+ * Removes the old entry when the key changes (e.g. candidate name edited)
+ * to prevent duplicate entries on the dashboard.
  * @param {{ erst: Object, zweit: Object }} data
  */
 export const saveToStorage = (data) => {
   try {
     const key = makeKey(data.erst?.meta);
+
+    // If key changed (e.g. user edited name/date), remove old entry
+    if (previousKey && previousKey !== key) {
+      localStorage.removeItem(previousKey);
+    }
+    previousKey = key;
+
     localStorage.setItem(key, JSON.stringify(data));
     localStorage.setItem(`${STORAGE_PREFIX}last-key`, key);
   } catch {
@@ -34,6 +46,8 @@ export const loadFromStorage = () => {
   try {
     const lastKey = localStorage.getItem(`${STORAGE_PREFIX}last-key`);
     if (!lastKey) return null;
+    // Initialize previousKey so subsequent saves can detect key changes
+    previousKey = lastKey;
     const raw = localStorage.getItem(lastKey);
     return raw ? JSON.parse(raw) : null;
   } catch {

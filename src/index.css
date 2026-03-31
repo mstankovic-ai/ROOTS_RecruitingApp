@@ -62,6 +62,14 @@ select,
 button {
   font-family: inherit;
   color: inherit;
+  direction: ltr;
+  text-align: left;
+}
+
+/* contentEditable fields */
+[contenteditable] {
+  direction: ltr;
+  text-align: left;
 }
 
 textarea:focus,

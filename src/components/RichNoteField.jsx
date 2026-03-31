@@ -77,6 +77,7 @@ const RichNoteField = memo(({ value, onChange, placeholder }) => {
           ref={editorRef}
           contentEditable
           suppressContentEditableWarning
+          dir="ltr"
           onInput={handleInput}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}

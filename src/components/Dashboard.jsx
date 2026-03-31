@@ -1,5 +1,5 @@
 import { memo, useMemo, useCallback, useState } from 'react';
-import { theme, glassElevated, shared } from '../theme';
+import { theme, glassElevated } from '../theme';
 import { getAllCandidates, removeCandidate } from '../utils/storage';
 import { DIMENSIONS, DIMENSION_COLORS } from '../data/dimensions';
 import { calculateDimensionScores, calculateWeightedOverall, mergeRatings, DEFAULT_WEIGHTS } from '../utils/scoring';

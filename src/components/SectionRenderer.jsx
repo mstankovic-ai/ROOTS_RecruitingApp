@@ -16,12 +16,6 @@ const SectionRenderer = memo(({ section, sectionNum, isZweit, erst, zweit, curre
   const caseGreyed = section.isCase && isZweit && !!erst.caseChecks[section.caseKey];
   const rtiGreyed = section.type === 'rti' && isZweit && erst.rtiDone;
 
-  const timeBadge = (time) => (
-    <span style={{ fontSize: theme.font.xs, color: theme.colors.text.muted, fontWeight: 500, marginLeft: 'auto', padding: '4px 12px', background: 'rgba(255,255,255,0.04)', borderRadius: theme.radius.full, border: `1px solid ${theme.colors.border.subtle}`, fontFamily: theme.fontMono }}>
-      {time}
-    </span>
-  );
-
   return (
     <div id={`section-${section.id}`} style={{ marginBottom: theme.spacing.xl + 8 }}>
       {section.main && (

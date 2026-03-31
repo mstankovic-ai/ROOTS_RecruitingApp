@@ -4,7 +4,7 @@ import { theme } from '../theme';
 
 const Navigation = memo(({ sectionNumbers, isZweit, currentState }) => {
   const [activeId, setActiveId] = useState(null);
-  const [expandedChapter, setExpandedChapter] = useState(null);
+  const [manualExpanded, setManualExpanded] = useState(null);
   const observerRef = useRef(null);
 
   // Group sections into chapters (main sections with their sub-sections)
@@ -38,17 +38,26 @@ const Navigation = memo(({ sectionNumbers, isZweit, currentState }) => {
     return () => observerRef.current?.disconnect();
   }, [isZweit]);
 
-  // Auto-expand the chapter that contains the active section
-  useEffect(() => {
-    if (!activeId) return;
+  // Derive expanded chapter from active section (auto-expand)
+  const autoExpandedChapter = useMemo(() => {
+    if (!activeId) return null;
     const sectionId = activeId.replace('section-', '');
     for (const chapter of chapters) {
       if (chapter.main.id === sectionId || chapter.subs.some(s => s.section.id === sectionId)) {
-        setExpandedChapter(chapter.main.id);
-        return;
+        return chapter.main.id;
       }
     }
+    return null;
   }, [activeId, chapters]);
+
+  const expandedChapter = manualExpanded ?? autoExpandedChapter;
+
+  // Reset manual override when active section changes chapter
+  const prevAutoRef = useRef(autoExpandedChapter);
+  if (prevAutoRef.current !== autoExpandedChapter) {
+    prevAutoRef.current = autoExpandedChapter;
+    if (manualExpanded !== null) setManualExpanded(null);
+  }
 
   const scrollTo = useCallback((id) => {
     const el = document.getElementById(`section-${id}`);
@@ -103,7 +112,7 @@ const Navigation = memo(({ sectionNumbers, isZweit, currentState }) => {
             {/* Chapter header */}
             <div
               onClick={() => {
-                setExpandedChapter(isExpanded ? null : chapter.main.id);
+                setManualExpanded(isExpanded ? null : chapter.main.id);
                 scrollTo(chapter.main.id);
               }}
               style={{

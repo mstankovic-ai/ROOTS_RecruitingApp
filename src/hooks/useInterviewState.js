@@ -150,13 +150,19 @@ export const useInterviewState = () => {
   );
 
   // Debounced auto-save (300ms)
+  // Track whether erst/zweit changed after initial load to trigger save
+  const needsSave = useRef(false);
   useEffect(() => {
     if (!initialLoadDone.current) return;
-    setSaveStatus('saving');
+    needsSave.current = true;
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(() => {
-      saveToStorage({ erst, zweit });
-      setSaveStatus('saved');
+      if (needsSave.current) {
+        setSaveStatus('saving');
+        saveToStorage({ erst, zweit });
+        setSaveStatus('saved');
+        needsSave.current = false;
+      }
     }, 300);
     return () => clearTimeout(saveTimerRef.current);
   }, [erst, zweit]);

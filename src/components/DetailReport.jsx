@@ -1,12 +1,12 @@
 import { memo, useMemo } from 'react';
-import { theme, glassElevated, shared } from '../theme';
+import { theme, glassElevated } from '../theme';
 import { SECTIONS } from '../data/sections';
 import { DIMENSIONS, DIMENSION_COLORS } from '../data/dimensions';
 import { calculateDimensionScores, calculateWeightedOverall, mergeRatings, DEFAULT_WEIGHTS } from '../utils/scoring';
 
 const DetailReport = memo(({ data, onBack, onLoadCandidate }) => {
-  const erst = data.erst || {};
-  const zweit = data.zweit || {};
+  const erst = useMemo(() => data.erst || {}, [data.erst]);
+  const zweit = useMemo(() => data.zweit || {}, [data.zweit]);
   const meta = erst.meta || {};
   const isZweit = meta.runde === 'zweit';
   const hasZweit = isZweit;
