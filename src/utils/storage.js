@@ -1,11 +1,12 @@
+import { supabase, isSupabaseConfigured } from './supabase';
+
 const STORAGE_PREFIX = 'roots-interview-';
 
-/**
- * Generates a localStorage key from candidate name, date, and session ID.
- * The sessionId ensures multiple interviews for the same candidate don't collide.
- * Falls back to 'draft' if no meta is available.
- */
-const makeKey = (meta) => {
+/* ──────────────────────────────────────────────
+   localStorage helpers (fallback / offline cache)
+   ────────────────────────────────────────────── */
+
+const makeLocalKey = (meta) => {
   const name = (meta?.kandidat || '').trim().replace(/\s+/g, '-').toLowerCase();
   const date = meta?.datum || '';
   const sid = meta?.sessionId || '';
@@ -15,41 +16,26 @@ const makeKey = (meta) => {
   return `${STORAGE_PREFIX}draft`;
 };
 
-/** Tracks the previous storage key so we can clean up when it changes */
 let previousKey = null;
 
-/**
- * Saves interview state to localStorage.
- * Removes the old entry when the key changes (e.g. candidate name edited)
- * to prevent duplicate entries on the dashboard.
- * @param {{ erst: Object, zweit: Object }} data
- */
-export const saveToStorage = (data) => {
+const saveToLocalStorage = (data) => {
   try {
-    const key = makeKey(data.erst?.meta);
-
-    // If key changed (e.g. user edited name/date), remove old entry
+    const key = makeLocalKey(data.erst?.meta);
     if (previousKey && previousKey !== key) {
       localStorage.removeItem(previousKey);
     }
     previousKey = key;
-
     localStorage.setItem(key, JSON.stringify(data));
     localStorage.setItem(`${STORAGE_PREFIX}last-key`, key);
   } catch {
-    // localStorage full or unavailable – silently fail
+    // localStorage full or unavailable
   }
 };
 
-/**
- * Loads the most recent interview state from localStorage.
- * @returns {{ erst: Object, zweit: Object } | null}
- */
-export const loadFromStorage = () => {
+const loadFromLocalStorage = () => {
   try {
     const lastKey = localStorage.getItem(`${STORAGE_PREFIX}last-key`);
     if (!lastKey) return null;
-    // Initialize previousKey so subsequent saves can detect key changes
     previousKey = lastKey;
     const raw = localStorage.getItem(lastKey);
     return raw ? JSON.parse(raw) : null;
@@ -58,26 +44,7 @@ export const loadFromStorage = () => {
   }
 };
 
-/**
- * Exports state as a downloadable JSON file.
- * @param {Object} data - Full interview data
- * @param {string} filename - Desired filename
- */
-export const exportAsJson = (data, filename) => {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  link.click();
-  URL.revokeObjectURL(url);
-};
-
-/**
- * Returns all saved candidate interviews from localStorage.
- * @returns {Array<{ key: string, data: Object }>}
- */
-export const getAllCandidates = () => {
+const getAllFromLocalStorage = () => {
   const results = [];
   try {
     for (let i = 0; i < localStorage.length; i++) {
@@ -100,10 +67,126 @@ export const getAllCandidates = () => {
   return results;
 };
 
+/* ──────────────────────────────────────────────
+   Supabase helpers
+   ────────────────────────────────────────────── */
+
+const toRow = (data) => {
+  const erst = data.erst || {};
+  const zweit = data.zweit || {};
+  const meta = erst.meta || {};
+  return {
+    session_id: meta.sessionId || '',
+    kandidat: meta.kandidat || '',
+    interviewer: meta.interviewer || '',
+    datum: meta.datum || '',
+    runde: meta.runde || 'erst',
+    erst: erst,
+    zweit: zweit,
+    recommendation: (meta.runde === 'zweit' ? zweit.recommendation : erst.recommendation) || null,
+    weighted_overall: data._weightedOverall ?? null,
+  };
+};
+
+const fromRow = (row) => ({
+  key: row.id,
+  data: {
+    erst: row.erst || {},
+    zweit: row.zweit || {},
+  },
+});
+
+/* ──────────────────────────────────────────────
+   Public API – Supabase first, localStorage fallback
+   ────────────────────────────────────────────── */
+
 /**
- * Clears all ROOTS interview data from localStorage.
+ * Saves interview state. Writes to Supabase (upsert by session_id)
+ * and also mirrors to localStorage for offline caching.
  */
-export const clearAllStorage = () => {
+export const saveToStorage = async (data) => {
+  // Always save locally for immediate access / offline
+  saveToLocalStorage(data);
+
+  if (!isSupabaseConfigured()) return;
+
+  try {
+    const row = toRow(data);
+    if (!row.session_id) return;
+
+    await supabase
+      .from('interviews')
+      .upsert(row, { onConflict: 'session_id' });
+  } catch {
+    // Supabase unavailable – localStorage has the data
+  }
+};
+
+/**
+ * Loads the most recent interview for the current session.
+ * Tries localStorage first (instant), then Supabase.
+ */
+export const loadFromStorage = () => {
+  // For initial load, just use localStorage (fast, synchronous)
+  return loadFromLocalStorage();
+};
+
+/**
+ * Returns all saved candidate interviews.
+ * Merges Supabase (authoritative) with localStorage (offline buffer).
+ */
+export const getAllCandidates = async () => {
+  if (!isSupabaseConfigured()) {
+    return getAllFromLocalStorage();
+  }
+
+  try {
+    const { data: rows, error } = await supabase
+      .from('interviews')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    return (rows || []).map(fromRow);
+  } catch {
+    // Fallback to localStorage
+    return getAllFromLocalStorage();
+  }
+};
+
+/**
+ * Removes a single candidate interview.
+ */
+export const removeCandidate = async (storageKey) => {
+  // Remove from localStorage
+  try {
+    localStorage.removeItem(storageKey);
+    const lastKey = localStorage.getItem(`${STORAGE_PREFIX}last-key`);
+    if (lastKey === storageKey) {
+      localStorage.removeItem(`${STORAGE_PREFIX}last-key`);
+    }
+  } catch {
+    // localStorage unavailable
+  }
+
+  if (!isSupabaseConfigured()) return;
+
+  try {
+    // storageKey from Supabase is the UUID
+    await supabase
+      .from('interviews')
+      .delete()
+      .eq('id', storageKey);
+  } catch {
+    // Supabase unavailable
+  }
+};
+
+/**
+ * Clears all ROOTS interview data.
+ */
+export const clearAllStorage = async () => {
   try {
     const keysToRemove = [];
     for (let i = 0; i < localStorage.length; i++) {
@@ -116,28 +199,25 @@ export const clearAllStorage = () => {
   } catch {
     // localStorage unavailable
   }
+
+  // Note: we do NOT clear Supabase on reset – only local state resets
 };
 
 /**
- * Removes a single candidate entry from localStorage.
- * @param {string} storageKey
+ * Exports state as a downloadable JSON file.
  */
-export const removeCandidate = (storageKey) => {
-  try {
-    localStorage.removeItem(storageKey);
-    const lastKey = localStorage.getItem(`${STORAGE_PREFIX}last-key`);
-    if (lastKey === storageKey) {
-      localStorage.removeItem(`${STORAGE_PREFIX}last-key`);
-    }
-  } catch {
-    // localStorage unavailable
-  }
+export const exportAsJson = (data, filename) => {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
 };
 
 /**
  * Exports interview as a readable Markdown report.
- * @param {Object} data - Full interview data including scores
- * @returns {string} Markdown text
  */
 export const exportAsMarkdown = (data) => {
   const { erst, zweit, scores } = data;
@@ -169,4 +249,28 @@ export const exportAsMarkdown = (data) => {
   }
 
   return md;
+};
+
+/**
+ * Subscribe to realtime changes on the interviews table.
+ * Returns an unsubscribe function.
+ */
+export const subscribeToInterviews = (callback) => {
+  if (!isSupabaseConfigured()) return () => {};
+
+  const channel = supabase
+    .channel('interviews-changes')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'interviews' },
+      () => {
+        // Refetch all candidates when any change happens
+        callback();
+      }
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
 };

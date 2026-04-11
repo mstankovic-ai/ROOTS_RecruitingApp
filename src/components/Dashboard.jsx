@@ -1,12 +1,11 @@
-import { memo, useMemo, useCallback, useState } from 'react';
+import { memo, useMemo, useCallback, useState, useEffect } from 'react';
 import { theme, glassElevated } from '../theme';
-import { getAllCandidates, removeCandidate } from '../utils/storage';
+import { getAllCandidates, removeCandidate, subscribeToInterviews } from '../utils/storage';
 import { DIMENSIONS, DIMENSION_COLORS } from '../data/dimensions';
 import { calculateDimensionScores, calculateWeightedOverall, mergeRatings, DEFAULT_WEIGHTS } from '../utils/scoring';
 
 const STATUS_COLORS = {
   'Zum Zweitgespräch einladen': { bg: 'rgba(99, 102, 241, 0.08)', text: '#4F46E5', border: 'rgba(99, 102, 241, 0.2)' },
-  'Auf Warteliste': { bg: 'rgba(245, 158, 11, 0.08)', text: '#B45309', border: 'rgba(245, 158, 11, 0.2)' },
   'Absage': { bg: 'rgba(220, 38, 38, 0.08)', text: '#DC2626', border: 'rgba(220, 38, 38, 0.2)' },
   'Zum Case Interview einladen': { bg: 'rgba(34, 197, 94, 0.08)', text: '#16A34A', border: 'rgba(34, 197, 94, 0.2)' },
 };
@@ -35,8 +34,33 @@ function getRunde(data) {
 }
 
 const Dashboard = memo(({ onBack, onOpenDetail, onLoadCandidate }) => {
-  const [candidates, setCandidates] = useState(() => getAllCandidates());
+  const [candidates, setCandidates] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [confirmDelete, setConfirmDelete] = useState(null);
+
+  // Fetch candidates (used by realtime callback and delete handler)
+  const fetchCandidates = useCallback(async () => {
+    const result = await getAllCandidates();
+    setCandidates(result);
+    setLoading(false);
+  }, []);
+
+  // Load candidates on mount + subscribe to realtime changes
+  useEffect(() => {
+    let cancelled = false;
+    getAllCandidates().then((result) => {
+      if (!cancelled) {
+        setCandidates(result);
+        setLoading(false);
+      }
+    });
+    const unsub = subscribeToInterviews(() => {
+      getAllCandidates().then((result) => {
+        if (!cancelled) setCandidates(result);
+      });
+    });
+    return () => { cancelled = true; unsub(); };
+  }, []);
 
   const sorted = useMemo(() => {
     return [...candidates].sort((a, b) => {
@@ -46,11 +70,11 @@ const Dashboard = memo(({ onBack, onOpenDetail, onLoadCandidate }) => {
     });
   }, [candidates]);
 
-  const handleDelete = useCallback((key) => {
-    removeCandidate(key);
-    setCandidates(getAllCandidates());
+  const handleDelete = useCallback(async (key) => {
+    await removeCandidate(key);
+    await fetchCandidates();
     setConfirmDelete(null);
-  }, []);
+  }, [fetchCandidates]);
 
   const handleStartZweit = useCallback((data) => {
     onLoadCandidate(data);
@@ -72,7 +96,7 @@ const Dashboard = memo(({ onBack, onOpenDetail, onLoadCandidate }) => {
             Kandidaten-Dashboard
           </div>
           <div style={{ fontSize: theme.font.body, color: theme.colors.text.muted, marginTop: 4 }}>
-            {sorted.length} {sorted.length === 1 ? 'Kandidat' : 'Kandidaten'} gespeichert
+            {loading ? 'Lade...' : `${sorted.length} ${sorted.length === 1 ? 'Kandidat' : 'Kandidaten'} gespeichert`}
           </div>
         </div>
         <button onClick={onBack} style={{
@@ -83,7 +107,7 @@ const Dashboard = memo(({ onBack, onOpenDetail, onLoadCandidate }) => {
         </button>
       </div>
 
-      {sorted.length === 0 && (
+      {!loading && sorted.length === 0 && (
         <div style={{ ...glassElevated, padding: theme.spacing.xxl, textAlign: 'center', color: theme.colors.text.muted, fontSize: theme.font.md }}>
           Noch keine Kandidaten vorhanden. Starte ein Interview, um Daten zu erfassen.
         </div>

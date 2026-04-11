@@ -162,10 +162,10 @@ export const useInterviewState = () => {
     if (!initialLoadDone.current) return;
     needsSave.current = true;
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(() => {
+    saveTimerRef.current = setTimeout(async () => {
       if (needsSave.current) {
         setSaveStatus('saving');
-        saveToStorage({ erst, zweit });
+        await saveToStorage({ erst, zweit });
         setSaveStatus('saved');
         needsSave.current = false;
       }
