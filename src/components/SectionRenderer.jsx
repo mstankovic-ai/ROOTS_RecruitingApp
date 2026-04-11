@@ -10,6 +10,7 @@ import CultureFitBlock from './CultureFitBlock';
 import SectionTimer from './SectionTimer';
 import QuestionCard from './QuestionCard';
 import EvalRow from './EvalRow';
+import UnevaluatedForSection from './UnevaluatedForSection';
 
 const SectionRenderer = memo(({ section, sectionNum, isZweit, erst, zweit, currentState, dispatch, kandidat, interviewer }) => {
   if (!sectionNum || !sectionNum.visible) return null;
@@ -63,10 +64,32 @@ const SectionRenderer = memo(({ section, sectionNum, isZweit, erst, zweit, curre
         </div>
       )}
 
+      {/* Unevaluated questions from Erst, placed in their thematic Zweit section */}
+      {isZweit && (
+        <UnevaluatedForSection
+          sectionId={section.id}
+          erst={erst}
+          dispatch={dispatch}
+          currentState={currentState}
+        />
+      )}
+
       {section.type === 'script' && <ScriptBlock isZweit={isZweit} kandidat={kandidat} interviewer={interviewer} />}
       {section.type === 'roots' && <RootsBlock />}
       {section.type === 'rti' && <RTIBlock rtiDone={currentState.rtiDone} rtiGreyed={false} isZweit={isZweit} erst={erst} zweit={zweit} dispatch={dispatch} />}
-      {section.type === 'outro' && <OutroBlock isZweit={isZweit} kandidat={kandidat} abschlussNotes={currentState.abschlussNotes} dispatch={dispatch} outroFields={section.outroFields} />}
+      {section.type === 'outro' && (
+        <OutroBlock
+          isZweit={isZweit}
+          kandidat={kandidat}
+          abschlussNotes={currentState.abschlussNotes}
+          dispatch={dispatch}
+          outroFields={section.outroFields}
+          outroQuestion={section.outroQuestion}
+          outroEvaluation={section.outroEvaluation}
+          ratings={currentState.ratings}
+          erstRatings={isZweit ? erst.ratings : null}
+        />
+      )}
       {section.caseText && <CaseBlock caseText={section.caseText} greyed={false} />}
       {section.type === 'culturefit' && (
         <CultureFitBlock

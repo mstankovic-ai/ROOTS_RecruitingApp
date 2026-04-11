@@ -5,7 +5,7 @@ import { theme, shared, glassElevated } from '../theme';
 import { actions } from '../hooks/useInterviewState';
 
 const GesamtEvaluation = memo(({ dimScores, isZweit, erst, currentState, dispatch, canSwitchToZweit }) => {
-  const options = isZweit ? ['Zum Case Interview einladen', 'Absage'] : ['Zum Zweitgespräch einladen', 'Absage', 'Auf Warteliste'];
+  const options = isZweit ? ['Zum Case Interview einladen', 'Absage'] : ['Zum Zweitgespräch einladen', 'Absage'];
   const handleGesamtNote = useCallback((e) => dispatch(actions.setGesamtNote(e.target.value)), [dispatch]);
   const handleZweitAnmerkung = useCallback((e) => dispatch(actions.setZweitAnmerkung(e.target.value)), [dispatch]);
   const [showWeights, setShowWeights] = useState(false);

@@ -85,8 +85,10 @@ button:focus-visible {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
     font-size: 10px;
-    background: #fff;
+    background: #fff !important;
     color: #000;
+    margin: 0;
+    padding: 0;
   }
   .no-print {
     display: none !important;
@@ -101,5 +103,86 @@ button:focus-visible {
   }
   #root {
     background: #fff !important;
+  }
+
+  /* Fix header not overlapping content */
+  header {
+    position: relative !important;
+    top: auto !important;
+    z-index: auto !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+    border-bottom: 1px solid #ccc !important;
+    background: #fff !important;
+    padding: 8px 16px !important;
+  }
+
+  /* Fix main content area to use full width */
+  #root > div > div {
+    margin-left: 0 !important;
+    max-width: 100% !important;
+    padding: 8px 16px !important;
+  }
+
+  /* Hide navigation sidebar */
+  nav {
+    display: none !important;
+  }
+
+  /* Ensure cards don't break across pages */
+  [style*="borderRadius"] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Compact spacing for print */
+  [style*="marginBottom: 40px"],
+  [style*="marginBottom: 48px"] {
+    margin-bottom: 16px !important;
+  }
+
+  /* Ensure tables and grids fit page width */
+  div[style*="display: grid"] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Ensure text areas show content properly */
+  textarea {
+    border: 1px solid #ccc !important;
+    background: #f9f9f9 !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    resize: none !important;
+  }
+
+  /* Ensure evaluation rows are compact */
+  [role="group"] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    box-shadow: none !important;
+  }
+
+  /* Compact section headers for print */
+  [style*="fontSize: 32"] {
+    font-size: 20px !important;
+  }
+
+  /* Buttons hidden in print */
+  button {
+    display: none !important;
+  }
+
+  /* Keep select visible for round display */
+  select {
+    display: none !important;
+  }
+
+  /* Ensure rich text fields print correctly */
+  [contenteditable] {
+    border: 1px solid #ddd !important;
+    padding: 4px 8px !important;
+    min-height: 20px !important;
   }
 }

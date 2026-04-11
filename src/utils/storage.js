@@ -1,12 +1,15 @@
 const STORAGE_PREFIX = 'roots-interview-';
 
 /**
- * Generates a localStorage key from candidate name and date.
+ * Generates a localStorage key from candidate name, date, and session ID.
+ * The sessionId ensures multiple interviews for the same candidate don't collide.
  * Falls back to 'draft' if no meta is available.
  */
 const makeKey = (meta) => {
   const name = (meta?.kandidat || '').trim().replace(/\s+/g, '-').toLowerCase();
   const date = meta?.datum || '';
+  const sid = meta?.sessionId || '';
+  if (name && date && sid) return `${STORAGE_PREFIX}${name}-${date}-${sid}`;
   if (name && date) return `${STORAGE_PREFIX}${name}-${date}`;
   if (name) return `${STORAGE_PREFIX}${name}`;
   return `${STORAGE_PREFIX}draft`;

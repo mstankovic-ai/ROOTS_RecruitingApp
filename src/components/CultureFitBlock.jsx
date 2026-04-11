@@ -3,7 +3,7 @@ import { theme, shared } from '../theme';
 import { actions } from '../hooks/useInterviewState';
 import EvalRow from './EvalRow';
 
-const CultureFitBlock = memo(({ section, cultureFitAnswers, ratings, dispatch, erstRatings, isZweit }) => {
+const CultureFitBlock = memo(({ section, cultureFitAnswers, ratings, dispatch, erstRatings }) => {
   const questions = section.cultureFitQuestions || [];
 
   return (

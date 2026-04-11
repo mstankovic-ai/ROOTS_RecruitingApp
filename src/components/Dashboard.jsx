@@ -96,7 +96,7 @@ const Dashboard = memo(({ onBack, onOpenDetail, onLoadCandidate }) => {
           const runde = getRunde(data);
           const scores = getCandidateScore(data);
           const statusColor = STATUS_COLORS[status] || { bg: theme.colors.bg.muted, text: theme.colors.text.muted, border: theme.colors.border.glass };
-          const canStartZweit = status === 'Zum Zweitgespräch einladen' || status === 'Auf Warteliste';
+          const canStartZweit = status === 'Zum Zweitgespräch einladen';
           const isInZweit = data.erst?.meta?.runde === 'zweit';
 
           return (

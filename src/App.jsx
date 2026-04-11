@@ -13,6 +13,7 @@ import Dashboard from './components/Dashboard';
 import DetailReport from './components/DetailReport';
 import ErstScriptViewer from './components/ErstScriptViewer';
 import UnevaluatedQuestionsBlock from './components/UnevaluatedQuestionsBlock';
+import GlobalTimer from './components/GlobalTimer';
 
 export default function App() {
   const {
@@ -24,7 +25,6 @@ export default function App() {
     dispatch,
     dimScores,
     sectionNumbers,
-    saveStatus,
     resetAll,
     loadCandidate,
   } = useInterviewState();
@@ -65,7 +65,7 @@ export default function App() {
     loadCandidate(data);
     const rec = data.erst?.recommendation;
     const alreadyZweit = data.erst?.meta?.runde === 'zweit';
-    if ((rec === 'Zum Zweitgespräch einladen' || rec === 'Auf Warteliste') && !alreadyZweit) {
+    if (rec === 'Zum Zweitgespräch einladen' && !alreadyZweit) {
       setTimeout(() => dispatch(actions.setMeta('runde', 'zweit')), 50);
     }
     setView('interview');
@@ -129,7 +129,6 @@ export default function App() {
             isZweit={isZweit}
             canSwitchToZweit={canSwitchToZweit}
             dispatch={headerDispatch}
-            saveStatus={saveStatus}
             onExportJson={handleExportJson}
             onOpenDashboard={handleOpenDashboard}
             onReset={handleReset}
@@ -140,6 +139,11 @@ export default function App() {
           <Navigation sectionNumbers={sectionNumbers} isZweit={isZweit} currentState={currentState} />
 
           <div style={{ padding: `${theme.spacing.lg}px ${theme.spacing.xl}px`, maxWidth: 880, margin: '0 auto', marginLeft: 240 }}>
+            {/* Global Timer */}
+            <div style={{ marginBottom: theme.spacing.lg }}>
+              <GlobalTimer isZweit={isZweit} />
+            </div>
+
             {/* Zweitgespräch: notes from first interviewer */}
             {isZweit && erst.zweitAnmerkung && (
               <div style={{ background: theme.colors.warning.bg, border: `1px solid ${theme.colors.warning.border}`, borderRadius: theme.radius.lg, padding: theme.spacing.lg, marginBottom: theme.spacing.lg }}>

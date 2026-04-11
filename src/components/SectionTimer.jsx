@@ -66,6 +66,11 @@ const SectionTimer = memo(({ sectionId, timeStr, timerMinutes, dispatch, setTime
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      {/* Target time label (always visible) */}
+      <span style={{ fontSize: theme.font.xs, color: theme.colors.text.muted, fontFamily: theme.fontMono, padding: '2px 6px', borderRadius: theme.radius.sm, background: theme.colors.bg.muted }}>
+        Ziel: {configuredMin} Min.
+      </span>
+
       {/* Editable minutes (before start) */}
       {!started && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -94,15 +99,14 @@ const SectionTimer = memo(({ sectionId, timeStr, timerMinutes, dispatch, setTime
             <span
               onClick={() => setIsEditing(true)}
               style={{
-                fontSize: theme.font.xs, color: theme.colors.text.muted,
-                padding: '3px 8px', borderRadius: theme.radius.sm,
-                background: theme.colors.bg.muted,
-                border: `1px solid ${theme.colors.border.glass}`,
+                fontSize: theme.font.xs, color: theme.colors.accent.indigo,
                 cursor: 'pointer', fontFamily: theme.fontMono,
+                textDecoration: 'underline',
+                textDecorationStyle: 'dotted',
               }}
               title="Klicken zum Ändern"
             >
-              {configuredMin} Min.
+              bearbeiten
             </span>
           )}
         </div>
@@ -136,7 +140,7 @@ const SectionTimer = memo(({ sectionId, timeStr, timerMinutes, dispatch, setTime
         }}
         title={isRunning ? 'Pause' : 'Start'}
       >
-        {isRunning ? '❚❚' : '▶'}
+        {isRunning ? '\u275A\u275A' : '\u25B6'}
       </button>
 
       {/* Reset button */}
@@ -154,7 +158,7 @@ const SectionTimer = memo(({ sectionId, timeStr, timerMinutes, dispatch, setTime
           }}
           title="Reset"
         >
-          ↺
+          \u21BA
         </button>
       )}
     </div>

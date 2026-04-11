@@ -6,27 +6,24 @@ import RichNoteField from './RichNoteField';
 import EvalRow from './EvalRow';
 
 /**
- * Shows ALL unmatched unevaluated questions (those without a Zweit section mapping).
- * Displayed at the top of the Zweitgespräch as a fallback.
+ * Renders unevaluated questions for a specific Zweit section.
+ * Used by SectionRenderer to embed open questions in their thematic context.
  */
-const UnevaluatedQuestionsBlock = memo(({ erst, dispatch, currentState }) => {
-  const unmatched = useMemo(() => {
+const UnevaluatedForSection = memo(({ sectionId, erst, dispatch, currentState }) => {
+  const unevaluated = useMemo(() => {
     const grouped = getUnevaluatedBySection(erst.ratings || {});
-    return grouped['_unmatched'] || [];
-  }, [erst.ratings]);
+    return grouped[sectionId] || [];
+  }, [erst.ratings, sectionId]);
 
-  if (unmatched.length === 0) return null;
+  if (unevaluated.length === 0) return null;
 
   return (
-    <div style={{ marginBottom: theme.spacing.xl, padding: theme.spacing.lg, borderRadius: theme.radius.lg, background: theme.colors.warning.bg, border: `1px solid ${theme.colors.warning.border}` }}>
-      <div style={{ fontSize: theme.font.md, fontWeight: 700, color: theme.colors.warning.text, marginBottom: theme.spacing.sm }}>
-        Weitere offene Fragen aus dem Erstgespräch
-      </div>
-      <div style={{ fontSize: theme.font.sm, color: theme.colors.warning.textDark, marginBottom: theme.spacing.md, lineHeight: 1.6 }}>
-        Die folgenden Fragen wurden im Erstgespräch nicht bewertet.
+    <div style={{ marginBottom: theme.spacing.md, padding: theme.spacing.md, borderRadius: theme.radius.lg, background: theme.colors.warning.bg, border: `1px solid ${theme.colors.warning.border}` }}>
+      <div style={{ fontSize: theme.font.sm, fontWeight: 700, color: theme.colors.warning.text, marginBottom: theme.spacing.sm }}>
+        Offene Fragen aus dem Erstgespräch
       </div>
 
-      {unmatched.map(({ question, sectionMain, hasEvals }) => (
+      {unevaluated.map(({ question, sectionMain, hasEvals }) => (
         <div key={question.id} style={{ ...shared.card, marginBottom: theme.spacing.sm, background: '#fff' }}>
           <div style={{ fontSize: theme.font.xs, fontWeight: 600, color: theme.colors.text.muted, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
             {sectionMain}
@@ -71,5 +68,5 @@ const UnevaluatedQuestionsBlock = memo(({ erst, dispatch, currentState }) => {
   );
 });
 
-UnevaluatedQuestionsBlock.displayName = 'UnevaluatedQuestionsBlock';
-export default UnevaluatedQuestionsBlock;
+UnevaluatedForSection.displayName = 'UnevaluatedForSection';
+export default UnevaluatedForSection;

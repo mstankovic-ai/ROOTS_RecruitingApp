@@ -2,7 +2,7 @@ import { memo, useCallback, useState } from 'react';
 import { theme } from '../theme';
 import { actions } from '../hooks/useInterviewState';
 
-const Header = memo(({ erst, isZweit, canSwitchToZweit, dispatch, saveStatus, onExportJson, onOpenDashboard, onReset }) => {
+const Header = memo(({ erst, canSwitchToZweit, dispatch, onExportJson, onOpenDashboard, onReset }) => {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const meta = erst.meta;
 
@@ -19,9 +19,6 @@ const Header = memo(({ erst, isZweit, canSwitchToZweit, dispatch, saveStatus, on
     (field) => (e) => dispatch(actions.setMeta(field, e.target.value)),
     [dispatch],
   );
-
-  const saveLabel =
-    saveStatus === 'saving' ? 'Speichern...' : saveStatus === 'saved' ? 'Gespeichert' : '';
 
   const metaFields = [
     { key: 'kandidat', label: 'Kandidat:in', type: 'text', width: 180 },
@@ -40,6 +37,16 @@ const Header = memo(({ erst, isZweit, canSwitchToZweit, dispatch, saveStatus, on
     cursor: 'pointer',
     transition: `all ${theme.transition.fast}`,
     letterSpacing: '0.02em',
+  };
+
+  const iconBtnStyle = {
+    ...btnStyle,
+    padding: '8px 10px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 36,
+    minHeight: 36,
   };
 
   return (
@@ -80,13 +87,7 @@ const Header = memo(({ erst, isZweit, canSwitchToZweit, dispatch, saveStatus, on
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }} className="no-print">
-          {saveLabel && (
-            <span style={{ fontSize: theme.font.xs, color: theme.colors.text.muted, fontWeight: 500, padding: '4px 10px', borderRadius: theme.radius.sm, background: theme.colors.bg.muted }}>
-              {saveLabel}
-            </span>
-          )}
-
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }} className="no-print">
           <select
             value={meta.runde}
             onChange={handleRoundChange}
@@ -106,33 +107,35 @@ const Header = memo(({ erst, isZweit, canSwitchToZweit, dispatch, saveStatus, on
             </option>
           </select>
 
-          {!canSwitchToZweit && !isZweit && (
-            <span style={{ fontSize: theme.font.xs, color: theme.colors.text.muted }}>Empfehlung nötig</span>
-          )}
-
-          <button onClick={onExportJson} style={btnStyle} aria-label="JSON exportieren">
-            Export JSON
+          {/* Export JSON – icon only */}
+          <button onClick={onExportJson} style={iconBtnStyle} aria-label="JSON exportieren" title="JSON exportieren">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           </button>
 
+          {/* PDF drucken */}
           <button
             onClick={() => window.print()}
-            style={{ ...btnStyle, background: theme.colors.accent.indigo, border: 'none', color: '#fff', boxShadow: theme.shadow.glow }}
+            style={{ ...iconBtnStyle, background: theme.colors.accent.indigo, border: 'none', color: '#fff', boxShadow: theme.shadow.glow }}
             aria-label="PDF drucken"
+            title="PDF drucken"
           >
-            PDF drucken
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
           </button>
 
+          {/* Dashboard – icon only */}
           <button
             onClick={onOpenDashboard}
-            style={{ ...btnStyle, background: theme.colors.accent.indigoLight, borderColor: `${theme.colors.accent.indigo}30`, color: theme.colors.accent.indigo }}
+            style={{ ...iconBtnStyle, background: theme.colors.accent.indigoLight, borderColor: `${theme.colors.accent.indigo}30`, color: theme.colors.accent.indigo }}
             aria-label="Dashboard"
+            title="Dashboard"
           >
-            Dashboard
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
           </button>
 
+          {/* Reset – icon only */}
           {showResetConfirm ? (
             <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-              <span style={{ fontSize: theme.font.xs, color: theme.colors.danger.text }}>Alles zurücksetzen?</span>
+              <span style={{ fontSize: theme.font.xs, color: theme.colors.danger.text }}>Reset?</span>
               <button onClick={() => { onReset(); setShowResetConfirm(false); }} style={{ ...btnStyle, borderColor: 'rgba(220,38,38,0.3)', color: theme.colors.danger.text, padding: '6px 12px' }}>
                 Ja
               </button>
@@ -141,8 +144,8 @@ const Header = memo(({ erst, isZweit, canSwitchToZweit, dispatch, saveStatus, on
               </button>
             </div>
           ) : (
-            <button onClick={() => setShowResetConfirm(true)} style={{ ...btnStyle, color: theme.colors.text.muted }} aria-label="Zurücksetzen">
-              Reset
+            <button onClick={() => setShowResetConfirm(true)} style={{ ...iconBtnStyle, color: theme.colors.text.muted }} aria-label="Zurücksetzen" title="Zurücksetzen">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
             </button>
           )}
         </div>

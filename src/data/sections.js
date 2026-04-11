@@ -78,18 +78,15 @@ export const SECTIONS_ERST = [
         id: 's4_q0a',
         text: '\u201EDie Auswahl deines ersten Jobs ist eine wichtige Entscheidung und ein Meilenstein in deiner beruflichen Laufbahn. Stell dir vor, du hast ein weißes Blatt Papier – wie soll dein Job aussehen?\u201C',
         followUp: 'Optionale Nachfrage zur Klärung: \u201EWas möchtest du machen? Was ist dir wichtig?\u201C',
-        anchorGuidance: 'Klarheit der Jobvorstellung: Reflexionsprozess, Priorisierung, Selbstkenntnis, Bezug zur angestrebten Rolle',
       },
       {
         id: 's4_q0b',
         text: '\u201EWas bringst du mit, wenn du zu uns kommst?\u201C',
-        anchorGuidance: 'Selbsteinschätzung & Mehrwert: Relevante Stärken, konkreter Mehrwert mit Beispielen, Bezug zu ROOTS und Rolle',
       },
       {
         id: 's4_q2',
         text: '\u201EWarum hast Du dich gezielt für eine kleinere Beratung entschieden?\u201C',
         followUp: 'STAR-Prompt bei Bedarf: \u201EKannst Du ein konkretes Erlebnis nennen, das diese Entscheidung geprägt hat?\u201C',
-        anchorGuidance: 'Reflexionstiefe & Firmenbezug: Persönlich begründete Antwort, spezifischer Firmenbezug, reflektiert Herausforderungen',
       },
     ],
   },
@@ -113,19 +110,51 @@ export const SECTIONS_ERST = [
             anchor5: 'Klare, hohe eigene Standards; definiert Qualität aus Kundenperspektive und Wirksamkeit; Beispiel konkret, messbar, mit Stolz erzählt',
           },
         ],
+        collapsible: true,
       },
+      /* 2.4: Moved from Zweitgespräch to Erstgespräch */
       {
-        id: 's9_q1',
-        text: '\u201EWoran bist Du zuletzt gescheitert und was hast Du dann konkret getan?\u201C',
+        id: 's7_q1',
+        text: '\u201EWelches war das bislang größte und komplexeste Projekt, das Du geführt hast? Wie bist Du dabei vorgegangen? Gab es Probleme und wie hast Du diese gelöst?\u201C',
         evaluations: [
           {
-            label: 'Fehlerkultur & Eigeninitiative',
-            dimension: 'resilienz',
-            anchor1: 'Beispiel fällt schwer (\u2018Mir passieren kaum Fehler\u2019); Reaktion war reaktiv oder Schuld wurde externalisiert',
-            anchor3: 'Nennt konkretes Beispiel; kommuniziert Fehler; Reaktion korrekt, aber ohne abgeleiteten Verbesserungsschritt',
-            anchor5: 'Nennt glaubwürdiges Beispiel; korrigiert Fehler eigeninitiativ; kommuniziert transparent; leitet direkte Verbesserungsmaßnahme ab',
+            label: 'Projektkomplexität & Problemlösung',
+            dimension: 'projektmgmt',
+            anchor1: 'Beispiel wenig komplex; Probleme nicht proaktiv gelöst; kein strukturiertes Vorgehen',
+            anchor3: 'Solides Beispiel; Probleme erkannt und adressiert; Vorgehen nachvollziehbar',
+            anchor5: 'Komplexes Projekt überzeugend gemanagt; Probleme proaktiv antizipiert und gelöst; klare Struktur und Kommunikation',
           },
         ],
+        collapsible: true,
+      },
+      /* 2.5: Strategie & Analytics Fragen */
+      {
+        id: 's5_q_strat1',
+        text: '\u201EErzähl doch mal von einem Projekt, bei dem du für die Entwicklung einer größeren Strategie verantwortlich warst. Wie bist du dabei vorgegangen?\u201C',
+        evaluations: [
+          {
+            label: 'Strategisches Denken',
+            dimension: 'analytik',
+            anchor1: 'Beispiel fehlt oder ist operativ; kein strategischer Rahmen erkennbar',
+            anchor3: 'Solides Beispiel; erkennbarer strategischer Ansatz; Umsetzung bleibt vage',
+            anchor5: 'Klarer strategischer Rahmen; strukturiertes Vorgehen; überzeugender Impact',
+          },
+        ],
+        collapsible: true,
+      },
+      {
+        id: 's5_q_strat2',
+        text: '\u201EErzähl doch mal von einem Projekt, bei dem du wirklich neue Insights entdeckt hast. Wie bist du dabei vorgegangen, und wie wurden sie im weiteren Projekt genutzt?\u201C',
+        evaluations: [
+          {
+            label: 'Analytische Tiefe & Insights',
+            dimension: 'analytik',
+            anchor1: 'Beschreibt nur Datensammlung ohne echte Insights; kein analytischer Prozess erkennbar',
+            anchor3: 'Nennt relevante Insights; Analyseprozess nachvollziehbar; Nutzung im Projekt ansatzweise beschrieben',
+            anchor5: 'Differenzierte, überraschende Insights; klarer analytischer Prozess; konkrete Wirkung im Projekt',
+          },
+        ],
+        collapsible: true,
       },
     ],
   },
@@ -138,6 +167,8 @@ export const SECTIONS_ERST = [
     caseText: CASE_A,
     isCase: true,
     caseKey: 'caseA',
+    /** Case A only in Erstgespräch – never in Zweit (3.2) */
+    erstOnly: true,
     hint: 'Erwartet: Problemdiagnose VOR Lösungsvorschlag. Bsp. intern (4Ps), extern (veränderte Bedürfnisse, Mediakonsum), Wettbewerb (Newcomer, Substitute).',
     questions: [
       {
@@ -191,7 +222,7 @@ export const SECTIONS_ERST = [
     ],
   },
 
-  /* Block 7 – Culture-Fit */
+  /* Block 7 – Culture-Fit (2.6: nur Fragen 1, 2, 4, 6, 8) */
   {
     id: 's_cf',
     main: 'Culture-Fit',
@@ -201,14 +232,9 @@ export const SECTIONS_ERST = [
     cultureFitQuestions: [
       { id: 'cf_1', optionA: 'Rampensau', optionB: 'Backoffice' },
       { id: 'cf_2', optionA: 'Better done than perfect', optionB: 'Better perfect than done' },
-      { id: 'cf_3', optionA: 'Datenanalyse', optionB: 'Intuition' },
       { id: 'cf_4', optionA: 'Durchdenken', optionB: 'Schnell testen' },
-      { id: 'cf_5', optionA: 'Analytik', optionB: 'Kreativität' },
       { id: 'cf_6', optionA: 'Kundenanspruch', optionB: 'Eigenanspruch' },
-      { id: 'cf_7', optionA: 'Risiko', optionB: 'Sicherheit' },
       { id: 'cf_8', optionA: 'Nachfragen', optionB: 'Selbst erarbeiten' },
-      { id: 'cf_9', optionA: 'Office', optionB: 'Homeoffice' },
-      { id: 'cf_10', optionA: 'Generalist', optionB: 'Spezialist' },
     ],
     questions: [
       {
@@ -235,13 +261,26 @@ export const SECTIONS_ERST = [
     type: 'rti',
   },
 
-  /* Block 9 – Nachfragen & Abschluss */
+  /* Block 9 – Nachfragen & Abschluss (2.7: Aktuelles Gehalt vor Gehaltswunsch) */
   {
     id: 's15',
     main: 'Nachfragen & Abschluss',
     time: '5 Min.',
     type: 'outro',
-    outroFields: ['Arbeitsaufwand', 'Home Office', 'Reisetätigkeit', 'Einstiegsdatum', 'Gehaltswunsch'],
+    outroFields: ['Arbeitsaufwand', 'Home Office', 'Reisetätigkeit', 'Einstiegsdatum', 'Aktuelles Gehalt', 'Gehaltswunsch'],
+    /* 4.1: Evaluation "Qualität der Rückfrage" */
+    outroEvaluation: {
+      id: 's15_eval_erst',
+      evaluations: [
+        {
+          label: 'Qualität der Rückfragen',
+          dimension: 'kommunikation',
+          anchor1: 'Stellt keine Fragen oder nur Fragen zu Konditionen ohne Rollenbezug',
+          anchor3: 'Stellt 1–2 sinnvolle Fragen zu Rolle oder Team; zeigt grundlegendes Interesse',
+          anchor5: 'Stellt differenzierte Fragen zu Rolle, Lernmöglichkeiten, Kundenbasis oder Firmenstrategie; zeigt echte Vorbereitung',
+        },
+      ],
+    },
   },
 ];
 
@@ -304,43 +343,25 @@ export const SECTIONS_ZWEIT = [
     ],
   },
 
-  /* Block 4 – Erfahrungen & Fit */
+  /* Block 4 – Erfahrungen & Fit (3.3: merged + 3.4: Option B removed + 2.3: gescheitert moved here) */
   {
     id: 's5_zweit',
     main: 'Erfahrungen & Fit',
     time: '6 Min.',
-    hint: 'STAR: Situation \u2192 Task \u2192 Action \u2192 Result. Bei der letzten Frage wählt der Interviewer eine der beiden Optionen.',
+    hint: 'STAR: Situation \u2192 Task \u2192 Action \u2192 Result.',
     questions: [
+      /* 3.3: Zusammengeführte Frage aus s7_q2 + s9_q2 */
       {
-        id: 's7_q1',
-        text: '\u201EWelches war das bislang größte und komplexeste Projekt, das Du geführt hast? Wie bist Du dabei vorgegangen? Gab es Probleme und wie hast Du diese gelöst?\u201C',
+        id: 's7_q2_merged',
+        text: '\u201EGab es mal eine Phase, in der Du mehrere anspruchsvolle Aufgaben gleichzeitig bewältigen musstest und dabei unter erheblichem Zeitdruck standest? Wie hast Du priorisiert – und bist Du dabei an Deine Grenzen gekommen? Wie bist Du damit umgegangen?\u201C',
         evaluations: [
           {
-            label: 'Projektkomplexität & Problemlösung',
-            dimension: 'projektmgmt',
-            anchor1: 'Beispiel wenig komplex; Probleme nicht proaktiv gelöst; kein strukturiertes Vorgehen',
-            anchor3: 'Solides Beispiel; Probleme erkannt und adressiert; Vorgehen nachvollziehbar',
-            anchor5: 'Komplexes Projekt überzeugend gemanagt; Probleme proaktiv antizipiert und gelöst; klare Struktur und Kommunikation',
-          },
-        ],
-      },
-      {
-        id: 's7_q2',
-        text: '\u201EGab es mal eine Phase, in der Du mehrere anspruchsvolle Aufgaben gleichzeitig bewältigen musstest und dabei unter erheblichem Zeitdruck standest? Wie hast Du priorisiert?\u201C',
-        evaluations: [
-          {
-            label: 'Priorisierung & Zeitmanagement',
+            label: 'Priorisierung & Stressresilienz',
             dimension: 'projektmgmt',
             anchor1: 'Schildert hauptsächlich Stress-Reaktion (Überforderung, Rückzug); keine aktive Bewältigungsstrategie; wenig Reflexion',
             anchor3: 'Bewältigt die Situation; zeigt Priorisierungsansatz; Strategie eher reaktiv; begrenzte Lernreflexion',
             anchor5: 'Zeigt aktive Stressregulation; priorisiert klar und kommuniziert proaktiv; hält Qualität; reflektiert Lessons Learned mit konkreter Umsetzung',
           },
-        ],
-      },
-      {
-        id: 's9_q2',
-        text: 'Option A: \u201EBist Du schon einmal an Deine absoluten Grenzen gekommen? Wie bist Du damit umgegangen?\u201C',
-        evaluations: [
           {
             label: 'Belastungsgrenze & Selbstregulation',
             dimension: 'resilienz',
@@ -350,17 +371,17 @@ export const SECTIONS_ZWEIT = [
           },
         ],
       },
+      /* 2.3: Moved from Erstgespräch */
       {
-        id: 's6_q2',
-        text: 'Option B: \u201EHast Du bereits vor einer größeren Gruppe präsentiert? Wie hast Du dich vorbereitet und wie bist Du mit dem Stress umgegangen?\u201C',
-        followUp: 'Falls keine große Gruppe: \u201EWie sieht es mit Meetings oder kleineren Präsentationen aus?\u201C',
+        id: 's9_q1',
+        text: '\u201EWoran bist Du zuletzt gescheitert und was hast Du dann konkret getan?\u201C',
         evaluations: [
           {
-            label: 'Präsentationskompetenz & Stressmanagement',
-            dimension: 'kommunikation',
-            anchor1: 'Kaum Erfahrung; keine erkennbare Vorbereitung; Stressumgang nicht reflektiert',
-            anchor3: 'Hat Erfahrung; bereitet sich strukturiert vor; Stressumgang vorhanden, aber wenig reflektiert',
-            anchor5: 'Routiniert; systematische Vorbereitung; reflektierter Umgang mit Nervosität; souveränes Auftreten',
+            label: 'Fehlerkultur & Eigeninitiative',
+            dimension: 'resilienz',
+            anchor1: 'Beispiel fällt schwer (\u2018Mir passieren kaum Fehler\u2019); Reaktion war reaktiv oder Schuld wurde externalisiert',
+            anchor3: 'Nennt konkretes Beispiel; kommuniziert Fehler; Reaktion korrekt, aber ohne abgeleiteten Verbesserungsschritt',
+            anchor5: 'Nennt glaubwürdiges Beispiel; korrigiert Fehler eigeninitiativ; kommuniziert transparent; leitet direkte Verbesserungsmaßnahme ab',
           },
         ],
       },
@@ -476,13 +497,31 @@ export const SECTIONS_ZWEIT = [
     ],
   },
 
-  /* Block 7 – Nachfragen & Abschluss */
+  /* Block 7 – Nachfragen & Abschluss (4.1: Evaluation ergänzt, 3.5: Frage hinzugefügt) */
   {
     id: 's15',
     main: 'Nachfragen & Abschluss',
     time: '5 Min.',
     type: 'outro',
     outroFields: ['Erwartungen 12 Mon.'],
+    /* 3.5: Abschlusstest-Frage aus Erstgespräch hierher verschoben */
+    outroQuestion: {
+      id: 's15_zweit_q1',
+      text: '\u201EWas müsste in den ersten 12 Monaten konkret passiert sein, damit Du sagst: \u2018Das war genau der richtige Schritt für mich\u2019?\u201C',
+    },
+    /* 4.1: Evaluation "Qualität der Rückfrage" */
+    outroEvaluation: {
+      id: 's15_eval_zweit',
+      evaluations: [
+        {
+          label: 'Qualität der Rückfragen',
+          dimension: 'kommunikation',
+          anchor1: 'Stellt keine Fragen oder nur Fragen zu Konditionen ohne Rollenbezug',
+          anchor3: 'Stellt 1–2 sinnvolle Fragen zu Rolle oder Team; zeigt grundlegendes Interesse',
+          anchor5: 'Stellt differenzierte Fragen zu Rolle, Lernmöglichkeiten, Kundenbasis oder Firmenstrategie; zeigt echte Vorbereitung',
+        },
+      ],
+    },
   },
 ];
 
@@ -509,6 +548,14 @@ export const getAllEvaluatedQuestions = () => {
         if (!seen.has(be.id)) {
           seen.add(be.id);
           questions.push({ id: be.id, evaluations: be.evaluations });
+        }
+      }
+      // Outro evaluations (4.1)
+      if (section.outroEvaluation) {
+        const oe = section.outroEvaluation;
+        if (!seen.has(oe.id)) {
+          seen.add(oe.id);
+          questions.push({ id: oe.id, evaluations: oe.evaluations });
         }
       }
       // Regular questions

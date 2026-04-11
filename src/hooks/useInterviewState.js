@@ -1,7 +1,7 @@
 import { useReducer, useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import { mergeRatings, calculateDimensionScores, calculateWeightedOverall, DEFAULT_WEIGHTS } from '../utils/scoring';
 import { computeSectionNumbers } from '../utils/numbering';
-import { saveToStorage, loadFromStorage, clearAllStorage } from '../utils/storage';
+import { saveToStorage, loadFromStorage } from '../utils/storage';
 
 /** Action types – readable and greppable */
 const TOGGLE_CHECK = 'TOGGLE_CHECK';
@@ -21,12 +21,14 @@ const SET_WEIGHT = 'SET_WEIGHT';
 const LOAD_STATE = 'LOAD_STATE';
 const RESET_STATE = 'RESET_STATE';
 
+const generateSessionId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+
 const INITIAL_STATE = {
   checks: {},
   notes: {},
   observations: {},
   ratings: {},
-  meta: { kandidat: '', interviewer: '', datum: '', runde: 'erst' },
+  meta: { kandidat: '', interviewer: '', datum: '', runde: 'erst', sessionId: '' },
   gesamtNote: '',
   recommendation: '',
   abschlussNotes: {},
@@ -95,7 +97,7 @@ const reducer = (state, action) => {
       return { ...action.payload };
 
     case RESET_STATE:
-      return { ...INITIAL_STATE };
+      return { ...INITIAL_STATE, meta: { ...INITIAL_STATE.meta, sessionId: action.sessionId || generateSessionId() } };
 
     default:
       return state;
@@ -113,19 +115,23 @@ export const useInterviewState = () => {
   const saveTimerRef = useRef(null);
   const initialLoadDone = useRef(false);
 
-  // Load from localStorage on mount
+  // Load from localStorage on mount, or generate fresh sessionId
   useEffect(() => {
     const saved = loadFromStorage();
     if (saved) {
       if (saved.erst) dispatchErst({ type: LOAD_STATE, payload: saved.erst });
       if (saved.zweit) dispatchZweit({ type: LOAD_STATE, payload: saved.zweit });
+    } else {
+      const sid = generateSessionId();
+      dispatchErst({ type: SET_META, field: 'sessionId', value: sid });
+      dispatchZweit({ type: SET_META, field: 'sessionId', value: sid });
     }
     initialLoadDone.current = true;
   }, []);
 
   const isZweit = erst.meta.runde === 'zweit';
   const currentState = isZweit ? zweit : erst;
-  const canSwitchToZweit = erst.recommendation === 'Zum Zweitgespräch einladen' || erst.recommendation === 'Auf Warteliste';
+  const canSwitchToZweit = erst.recommendation === 'Zum Zweitgespräch einladen';
 
   /** Unified dispatch that routes actions to the correct reducer */
   const dispatch = useCallback(
@@ -188,11 +194,11 @@ export const useInterviewState = () => {
     [isZweit],
   );
 
-  /** Reset all data – clears localStorage and resets both reducers */
+  /** Reset all data – generates new session, resets both reducers */
   const resetAll = useCallback(() => {
-    clearAllStorage();
-    dispatchErst({ type: RESET_STATE });
-    dispatchZweit({ type: RESET_STATE });
+    const sid = generateSessionId();
+    dispatchErst({ type: RESET_STATE, sessionId: sid });
+    dispatchZweit({ type: RESET_STATE, sessionId: sid });
   }, []);
 
   /** Load a specific candidate's data (e.g. from dashboard) */

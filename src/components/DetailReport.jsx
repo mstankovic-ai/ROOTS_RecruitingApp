@@ -21,7 +21,7 @@ const DetailReport = memo(({ data, onBack, onLoadCandidate }) => {
 
   const erstRecommendation = erst.recommendation || 'Keine Empfehlung';
   const zweitRecommendation = zweit.recommendation || null;
-  const canStartZweit = erst.recommendation === 'Zum Zweitgespräch einladen' || erst.recommendation === 'Auf Warteliste';
+  const canStartZweit = erst.recommendation === 'Zum Zweitgespräch einladen';
 
   const btnStyle = {
     padding: '8px 18px',
@@ -159,16 +159,6 @@ const DetailReport = memo(({ data, onBack, onLoadCandidate }) => {
           </div>
         )}
 
-        {/* Recommendation */}
-        {state.recommendation && (
-          <div style={{ ...glassElevated, padding: theme.spacing.md }}>
-            <div style={sectionLabel}>Empfehlung</div>
-            <div style={{ fontSize: theme.font.md, fontWeight: 700, color: theme.colors.text.accent }}>
-              {state.recommendation}
-            </div>
-          </div>
-        )}
-
         {/* Zweit-Anmerkungen (only in Erst) */}
         {state.zweitAnmerkung && label.includes('Erst') && (
           <div style={{
@@ -217,6 +207,16 @@ const DetailReport = memo(({ data, onBack, onLoadCandidate }) => {
                 <div style={{ fontSize: theme.font.body, color: theme.colors.text.primary, whiteSpace: 'pre-wrap' }}>{v}</div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Recommendation – positioned after Abschluss-Notizen (5.2) */}
+        {state.recommendation && (
+          <div style={{ ...glassElevated, padding: theme.spacing.md, marginTop: theme.spacing.sm + 4 }}>
+            <div style={sectionLabel}>Empfehlung</div>
+            <div style={{ fontSize: theme.font.md, fontWeight: 700, color: theme.colors.text.accent }}>
+              {state.recommendation}
+            </div>
           </div>
         )}
       </div>

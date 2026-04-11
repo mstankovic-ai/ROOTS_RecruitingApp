@@ -23,19 +23,12 @@ const QuestionCard = memo(({
             {question.text}
           </div>
           {question.followUp && (
-            <div style={{ fontSize: theme.font.body, color: theme.colors.accent.indigo, marginTop: 8, fontStyle: 'italic', lineHeight: 1.6, paddingLeft: 14, borderLeft: `2px solid ${theme.colors.accent.indigo}40` }}>
+            <div style={{ fontSize: theme.font.body, color: theme.colors.text.secondary, marginTop: 8, lineHeight: 1.6, paddingLeft: 14, borderLeft: `2px solid ${theme.colors.border.glass}` }}>
               {question.followUp}
             </div>
           )}
         </div>
       </div>
-
-      {/* Anchor guidance for block-level evaluation questions */}
-      {question.anchorGuidance && (
-        <div style={{ marginTop: theme.spacing.sm, padding: '8px 14px', borderRadius: theme.radius.md, background: theme.colors.info.bg, fontSize: theme.font.sm, color: theme.colors.info.text, lineHeight: 1.6, border: `1px solid ${theme.colors.info.border}` }}>
-          {question.anchorGuidance}
-        </div>
-      )}
 
       {question.checks && (
         <div style={{ margin: `${theme.spacing.sm + 4}px 0 4px 0`, display: 'flex', flexDirection: 'column', gap: 6, padding: '12px 16px', background: theme.colors.bg.muted, borderRadius: theme.radius.md, border: `1px solid ${theme.colors.border.subtle}` }}>
