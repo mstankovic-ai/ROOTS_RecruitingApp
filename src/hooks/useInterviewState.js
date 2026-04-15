@@ -201,10 +201,25 @@ export const useInterviewState = () => {
     dispatchZweit({ type: RESET_STATE, sessionId: sid });
   }, []);
 
-  /** Load a specific candidate's data (e.g. from dashboard) */
-  const loadCandidate = useCallback((data) => {
-    if (data.erst) dispatchErst({ type: LOAD_STATE, payload: data.erst });
-    if (data.zweit) dispatchZweit({ type: LOAD_STATE, payload: data.zweit });
+  /**
+   * Load a specific candidate's data (e.g. from dashboard).
+   * Pass { startZweit: true } to atomically switch to Zweitgespräch while loading,
+   * bypassing the stale-closure issue of dispatching SET_META afterwards.
+   */
+  const loadCandidate = useCallback((data, options = {}) => {
+    const startZweit = !!options.startZweit;
+    if (data.erst) {
+      const payload = startZweit
+        ? { ...data.erst, meta: { ...(data.erst.meta || {}), runde: 'zweit' } }
+        : data.erst;
+      dispatchErst({ type: LOAD_STATE, payload });
+    }
+    if (data.zweit) {
+      const payload = startZweit
+        ? { ...data.zweit, meta: { ...(data.zweit.meta || {}), runde: 'zweit' } }
+        : data.zweit;
+      dispatchZweit({ type: LOAD_STATE, payload });
+    }
   }, []);
 
   return {

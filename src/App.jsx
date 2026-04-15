@@ -64,15 +64,13 @@ export default function App() {
   }, []);
 
   const handleLoadCandidate = useCallback((data) => {
-    loadCandidate(data);
     const rec = data.erst?.recommendation;
     const alreadyZweit = data.erst?.meta?.runde === 'zweit';
-    if (rec === 'Zum Zweitgespräch einladen' && !alreadyZweit) {
-      setTimeout(() => dispatch(actions.setMeta('runde', 'zweit')), 50);
-    }
+    const startZweit = rec === 'Zum Zweitgespräch einladen' && !alreadyZweit;
+    loadCandidate(data, { startZweit });
     setView('interview');
     window.scrollTo(0, 0);
-  }, [loadCandidate, dispatch]);
+  }, [loadCandidate]);
 
   /** Edit mode: load interview without auto-switching to Zweit */
   const handleEditCandidate = useCallback((data) => {
