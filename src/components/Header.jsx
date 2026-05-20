@@ -56,7 +56,7 @@ const Header = memo(({ erst, canSwitchToZweit, dispatch, onExportJson, onOpenDas
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
         color: theme.colors.text.primary,
-        padding: '0 32px',
+        padding: '0 1.5rem',
         position: 'sticky',
         top: 0,
         zIndex: 50,
@@ -64,7 +64,7 @@ const Header = memo(({ erst, canSwitchToZweit, dispatch, onExportJson, onOpenDas
         boxShadow: theme.shadow.header,
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 68, gap: theme.spacing.md }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 64, gap: theme.spacing.md }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <div
             style={{
@@ -156,7 +156,7 @@ const Header = memo(({ erst, canSwitchToZweit, dispatch, onExportJson, onOpenDas
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: 20, paddingBottom: 16, paddingTop: 4, borderTop: `1px solid ${theme.colors.border.subtle}` }}>
+      <div style={{ display: 'flex', gap: 20, paddingBottom: '0.8rem', paddingTop: 4, borderTop: `1px solid ${theme.colors.border.subtle}` }}>
         {metaFields.map(({ key, label, type, width }) => (
           <div key={key} style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
             <label style={{ fontSize: theme.font.xs, fontWeight: 500, color: theme.colors.text.muted, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
